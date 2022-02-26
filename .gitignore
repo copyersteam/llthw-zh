@@ -1,0 +1,7 @@
+_book
+Thumbs.db
+.cache
+.tmp
+.temp
+dist
+node_modules
