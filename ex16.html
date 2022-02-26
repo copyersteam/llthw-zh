@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="generator" content="VuePress 2.0.0-beta.35">
+    <style>
+      :root {
+        --c-bg: #fff;
+      }
+      html.dark {
+        --c-bg: #22272e;
+      }
+      html, body {
+        background-color: var(--c-bg);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem('vuepress-color-scheme');
+			const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (userMode === 'dark' || (userMode !== 'light' && systemDarkMode)) {
+				document.documentElement.classList.toggle('dark', true);
+			}
+    </script>
+    <title>练习 16：处理进程，ps，kill | VuePress</title><meta name="description" content="Vue 驱动的静态网站生成器">
+    <link rel="modulepreload" href="/llthw-zh/assets/app.91d0dc40.js"><link rel="modulepreload" href="/llthw-zh/assets/ex16.html.03f0813e.js"><link rel="modulepreload" href="/llthw-zh/assets/ex16.html.cdc35f9e.js">
+    <link rel="stylesheet" href="/llthw-zh/assets/style.640a10cb.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><!--[--><header ref_key="navbar" class="navbar"><div class="toggle-sidebar-button" title="切换侧边栏" aria-expanded="false" role="button" tabindex="0"><div class="icon" aria-hidden="true"><span></span><span></span><span></span></div></div><span><a href="/llthw-zh/" class=""><!----><span class="site-name">VuePress</span></a></span><div class="navbar-items-wrapper" style=""><!--[--><!--]--><!----><!--[--><!--]--><button class="toggle-dark-button" title="切换夜间模式"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><form class="search-box" role="search"><input type="search" placeholder="搜索文档" autocomplete="off" spellcheck="false" value><!----></form></div></header><!--]--><div class="sidebar-mask"></div><!--[--><aside class="sidebar"><!----><!--[--><!--]--><ul class="sidebar-items"><!--[--><li><p tabindex="0" class="sidebar-item sidebar-heading active">教程 <!----></p><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a href="/llthw-zh/intro.html" class="sidebar-item" aria-label="引言"><!--[--><!--]--> 引言 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex0.html" class="sidebar-item" aria-label="练习 0：起步"><!--[--><!--]--> 练习 0：起步 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex1.html" class="sidebar-item" aria-label="练习 1：文本编辑器，vim"><!--[--><!--]--> 练习 1：文本编辑器，vim <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex2.html" class="sidebar-item" aria-label="练习 2：文本浏览器，少即是多"><!--[--><!--]--> 练习 2：文本浏览器，少即是多 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex3.html" class="sidebar-item" aria-label="练习 3：Bash：Shell、.profile、.bashrc、.bash_history。"><!--[--><!--]--> 练习 3：Bash：Shell、.profile、.bashrc、.bash_history。 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex4.html" class="sidebar-item" aria-label="练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch"><!--[--><!--]--> 练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex5.html" class="sidebar-item" aria-label="练习 5：Bash：环境变量，env，set，export"><!--[--><!--]--> 练习 5：Bash：环境变量，env，set，export <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex6.html" class="sidebar-item" aria-label="练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales"><!--[--><!--]--> 练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex7.html" class="sidebar-item" aria-label="练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv"><!--[--><!--]--> 练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex8.html" class="sidebar-item" aria-label="练习 8：更多的重定向和过滤：head，tail，awk，grep，sed"><!--[--><!--]--> 练习 8：更多的重定向和过滤：head，tail，awk，grep，sed <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex9.html" class="sidebar-item" aria-label="练习 9：Bash：任务控制，jobs，fg"><!--[--><!--]--> 练习 9：Bash：任务控制，jobs，fg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex10.html" class="sidebar-item" aria-label="练习 10：Bash：程序退出代码（返回状态）"><!--[--><!--]--> 练习 10：Bash：程序退出代码（返回状态） <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex11.html" class="sidebar-item" aria-label="练习 11：总结"><!--[--><!--]--> 练习 11：总结 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex12.html" class="sidebar-item" aria-label="练习 12：文档：man，info"><!--[--><!--]--> 练习 12：文档：man，info <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex13.html" class="sidebar-item" aria-label="练习 13：文档：Google"><!--[--><!--]--> 练习 13：文档：Google <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex14.html" class="sidebar-item" aria-label="练习 14：包管理：Debian 包管理工具aptitude"><!--[--><!--]--> 练习 14：包管理：Debian 包管理工具aptitude <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex15.html" class="sidebar-item" aria-label="练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d"><!--[--><!--]--> 练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex16.html" class="router-link-active router-link-exact-active router-link-active sidebar-item active" aria-label="练习 16：处理进程，ps，kill"><!--[--><!--]--> 练习 16：处理进程，ps，kill <!--[--><!--]--></a><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a aria-current="page" href="/llthw-zh/ex16.html#这样做" class="router-link-active router-link-exact-active sidebar-item" aria-label="这样做"><!--[--><!--]--> 这样做 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex16.html#你会看到什么" class="router-link-active router-link-exact-active sidebar-item" aria-label="你会看到什么"><!--[--><!--]--> 你会看到什么 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex16.html#解释" class="router-link-active router-link-exact-active sidebar-item" aria-label="解释"><!--[--><!--]--> 解释 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex16.html#附加题" class="router-link-active router-link-exact-active sidebar-item" aria-label="附加题"><!--[--><!--]--> 附加题 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><li><a href="/llthw-zh/ex17.html" class="sidebar-item" aria-label="练习 17：任务调度：cron，at"><!--[--><!--]--> 练习 17：任务调度：cron，at <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex18.html" class="sidebar-item" aria-label="练习 18：日志：/var/log，rsyslog，logger"><!--[--><!--]--> 练习 18：日志：/var/log，rsyslog，logger <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex19.html" class="sidebar-item" aria-label="练习 19：文件系统：挂载，mount，/etc/fstab"><!--[--><!--]--> 练习 19：文件系统：挂载，mount，/etc/fstab <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex20.html" class="sidebar-item" aria-label="练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs"><!--[--><!--]--> 练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex21.html" class="sidebar-item" aria-label="练习 21：文件系统：修改根目录，chroot"><!--[--><!--]--> 练习 21：文件系统：修改根目录，chroot <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex22.html" class="sidebar-item" aria-label="练习 22：文件系统：移动数据，tar，dd"><!--[--><!--]--> 练习 22：文件系统：移动数据，tar，dd <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex23.html" class="sidebar-item" aria-label="练习 23：文件系统：权限，chown，chmod，umask"><!--[--><!--]--> 练习 23：文件系统：权限，chown，chmod，umask <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex24.html" class="sidebar-item" aria-label="练习 24：接口配置，ifconfig，netstat，iproute2，ss，route"><!--[--><!--]--> 练习 24：接口配置，ifconfig，netstat，iproute2，ss，route <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex25.html" class="sidebar-item" aria-label="练习 25：网络：配置文件，/etc/network/interfaces"><!--[--><!--]--> 练习 25：网络：配置文件，/etc/network/interfaces <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex26.html" class="sidebar-item" aria-label="练习 26：网络：封包过滤配置，iptables"><!--[--><!--]--> 练习 26：网络：封包过滤配置，iptables <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex27.html" class="sidebar-item" aria-label="练习 27：安全 Shell，ssh，sshd，scp"><!--[--><!--]--> 练习 27：安全 Shell，ssh，sshd，scp <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex28.html" class="sidebar-item" aria-label="练习 28：性能：获取性能情况，uptime，free，top"><!--[--><!--]--> 练习 28：性能：获取性能情况，uptime，free，top <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex29.html" class="sidebar-item" aria-label="练习 29：内核：内核消息，dmesg"><!--[--><!--]--> 练习 29：内核：内核消息，dmesg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex30.html" class="sidebar-item" aria-label="练习 30：打磨、洗练、重复：总复习"><!--[--><!--]--> 练习 30：打磨、洗练、重复：总复习 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/next.html" class="sidebar-item" aria-label="下一步做什么"><!--[--><!--]--> 下一步做什么 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/mdi.html" class="sidebar-item" aria-label="Debian 手动安装"><!--[--><!--]--> Debian 手动安装 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><!--]--></ul><!--[--><!--]--></aside><!--]--><!--[--><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><h1 id="练习-16-处理进程-ps-kill" tabindex="-1"><a class="header-anchor" href="#练习-16-处理进程-ps-kill" aria-hidden="true">#</a> 练习 16：处理进程，<code>ps</code>，<code>kill</code></h1><blockquote><p>原文：<a href="https://archive.fo/CSqm9" target="_blank" rel="noopener noreferrer">Exercise 16. Processes: working with proccesses, ps, kill<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>译者：<a href="https://github.com/wizardforcel" target="_blank" rel="noopener noreferrer">飞龙<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>协议：<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>自豪地采用<a href="https://translate.google.cn/" target="_blank" rel="noopener noreferrer">谷歌翻译<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><p>最简单的程序是硬盘上的文件，它包含中央处理器执行的指令。当你启动它的时候，它被复制到内存，控制权传递给它。被执行的程序称为进程。在例如 Linux 的多任务操作系统中，你可以启动程序的许多实例，因此可以从一个程序启动许多进程，所有程序将同时运行（执行）。</p><p>这是执行<code>ls</code>时发生的事情的概述：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>你
+   把 ls 和它的参数输入到你的终端模拟器，然后按 &lt;ENTER&gt; 
+   控制权现在传递给 Bash 
+Bash 
+   在你的硬盘上查找 ls 
+   将自身派生到 Bash 克隆体，也就是将自己克隆到内存中的新位置
+   成为 Bash 克隆体的父进程
+   控制权传给了传递给 Bash 克隆体
+Bash 克隆体
+   成为 Bash 的子进程
+   保存 Bash 父进程的环境
+   知道它是一个克隆体并且做出相应的反应
+       使用 ls 覆盖自身
+       控制权现在传递给 ls 
+ls 
+   为你打印一个目录列表或返回错误
+   返回退出代码
+   控制权现在传递给 Bash 
+Bash 
+   将 ls 退出代码赋给 ? 变量
+   等待你的输入
+你
+   可以再次输入内容
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br></div></div><p>一些进程不像<code>ls</code>那样交互，只是在后台静静地工作，就像<code>ssh</code>一样。进程有许多可能的状态，并且有许多操作，你可以通过信号机制对它们执行。</p><p>首先让我们谈论状态。如果你键入<code>ps ax -forest</code>，它将打印出所有进程，你会得到这样的东西（跳过一些与硬件有关的进程）：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:/etc$ ps --forest ax
+  PID TTY      STAT   TIME COMMAND
+    1 ?        Ss     0:16 init [2]
+  297 ?        S&lt;s    0:00 udevd --daemon
+  392 ?        S&lt;     0:00  \_ udevd --daemon
+  399 ?        S&lt;     0:00  \_ udevd --daemon
+  691 ?        Ss     0:00 /sbin/portmap
+  703 ?        Ss     0:00 /sbin/rpc.statd
+  862 ?        Sl     0:00 /usr/sbin/rsyslogd -c4
+  886 ?        Ss     0:00 /usr/sbin/atd
+  971 ?        Ss     0:00 /usr/sbin/acpid
+  978 ?        Ss     0:01 /usr/sbin/cron
+ 1177 ?        Ss     0:00 /usr/sbin/sshd
+ 6671 ?        Ss     0:00  \_ sshd: user1 [priv]
+ 6675 ?        S      0:00      \_ sshd: user1@pts/0
+ 6676 pts/0    Ss     0:00          \_ -bash
+ 7932 pts/0    R+     0:00              \_ ps --forest ax
+ 1191 ?        Ss     0:00 /usr/sbin/exim4 -bd -q30m
+ 1210 tty2     Ss+    0:00 /sbin/getty 38400 tty2
+ 1211 tty3     Ss+    0:00 /sbin/getty 38400 tty3
+ 1212 tty4     Ss+    0:00 /sbin/getty 38400 tty4
+ 1213 tty5     Ss+    0:00 /sbin/getty 38400 tty5
+ 1214 tty6     Ss+    0:00 /sbin/getty 38400 tty6
+ 6216 tty1     Ss+    0:00 /sbin/getty 38400 tty1
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br></div></div><p>让我们浏览这个列表：</p><p><code>PID</code> - 进程 ID。每个进程都有与之相关联的唯一编号，用于唯一标识它。这意味着没有两个进程可以拥有相同的 PID。 <code>TTY</code> - 与进程相关联的电传模拟器，允许进程与你交换信息。 <code>STAT</code> - 当前进程状态。这将在下面详细描述。 <code>TIME</code> - 这是在 CPU 上执行此进程的时间（以分钟为单位）。 <code>COMMAND</code> - 这是带有参数的程序名称。请注意<code>/usr/sbin/sshd</code>是<code>sshd: user1</code>的父进程，而<code>sshd: user1</code>又是<code>sshd: user1@pts/0</code>的父进程，而<code>sshd: user1@pts/0</code>又是<code>bash</code>的父进程，而<code>bash</code>又是<code>ps –forest ax</code>的父进程。你需要更深入一些！</p><p>现在让我们讨论可能的进程状态。你可以参考<code>man ps</code>的 PROCESS STATE CODES。</p><table><thead><tr><th>状态</th><th>描述</th></tr></thead><tbody><tr><td>D</td><td>不中断睡眠（通常为 IO）。进程繁忙或挂起，不响应信号，例如硬盘已经崩溃，读操作无法完成。</td></tr><tr><td>R</td><td>运行或可运行（在运行队列中）。进程正在执行中。</td></tr><tr><td>S</td><td>中断睡眠（等待事件完成）。例如，终端进程和 Bash 通常处于此状态，等待你键入某些内容。</td></tr><tr><td>T</td><td>停止，由任务控制信号或由于被追踪。</td></tr><tr><td>W</td><td>分页（从 2.6.xx 内核起无效，所以不用担心）。</td></tr><tr><td>X</td><td>死亡（不应该看到）。</td></tr><tr><td>Z</td><td>已停止（“僵尸”）进程，已终止，但未被父项收回。这种情况发生在错误终止的进程上。</td></tr><tr><td>&lt;</td><td>高优先级（对其他用户不好）</td></tr><tr><td>N</td><td>低优先级（对其他用户很好）</td></tr><tr><td>L</td><td>将页面锁定到内存中（用于实时和自定义 IO）</td></tr><tr><td>s</td><td>是会话领导。Linux 中的相关进程被视为一个单元，并具有共享会话 ID（SID）。如果进程 ID（PID）= 会话 ID（SID），则此进程将是会话领导。</td></tr><tr><td>L</td><td>是多线程的（使用 CLONE_THREAD，例如 NPTL pthreads）</td></tr><tr><td>+</td><td>位于前台进程组。这样的处理器允许输入和输出到电传模拟器，tty。</td></tr></tbody></table><p>现在让我们讨论，与所有这些进程沟通的方式。你可以通过发送信号来实现它。信号可能是一种鞭策进程方式，所以进程会听你的话，并做出你想要的行为。这是可能的进程的缩略列表，我从<code>man kill</code>的<code>SIGNALS</code>部分获得：</p><p>| 信号 | 编号 | 行为 | 描述 | | 0 | 0 | N/A | 退出代码表示是否可以发送信号 | | HUP | 1 | 退出 | 控制终端挂起或父进程死亡 | | INT | 2 | 退出 | 来自键盘的中断 | | QUIT | 3 | 内核 | 来自键盘的退出 | | ILL | 4 | 内核 | 非法指令 | | TRAP | 5 | 内核 | 跟踪/断点捕获 | | ABRT | 6 | 内核 | 来自<code>abort(3)</code>的中止信号 | | FPE | 8 | 内核 | 浮点异常 | | KILL | 9 | 退出 | 不可捕获，不可忽视的杀死 | | SEGV | 11 | 内核 | 内存引用无效 | | PIPE | 13 | 退出 | 损坏的管道：写入没有读者的管道 | | ALRM | 14 | 退出 | 来自<code>alarm(2)</code>的定时器信号 | | TERM | 15 | 退出 | 终止进程 |</p><p>同样，不要因为不理解而害怕，因为现在你只需要了解<code>HUP</code>，<code>TERM</code>和<code>KILL</code>。甚至有一首关于<code>KILL</code>信号的歌曲 ，命名为<a href="http://www.monzy.com/intro/killdashnine_lyrics.html" target="_blank" rel="noopener noreferrer">《Kill dash nine》<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>。另外，注意到<code>abort(3)</code>和<code>alarm(2)</code>了么？这意味着你可以通过键入<code>man 3 abort</code>和<code>man 2 alarm</code>来阅读相应的手册页。</p><p>现在，你将学习如何列出正在运行的进程并向其发送信号。</p><h2 id="这样做" tabindex="-1"><a class="header-anchor" href="#这样做" aria-hidden="true">#</a> 这样做</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code> 1: ps x
+ 2: ps a
+ 3: ps ax
+ 4: ps axue --forest
+ 5: dd if=/dev/zero of=~/test.img bs=1 count=$((1024*1024*1024)) &amp;
+ 6: kill -s USR1 $!
+ 7: &lt;ENTER&gt;
+ 8: kill -s USR1 $!
+ 9: &lt;ENTER&gt;
+10: kill -s TERM $!
+11: &lt;ENTER&gt;
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br></div></div><h2 id="你会看到什么" tabindex="-1"><a class="header-anchor" href="#你会看到什么" aria-hidden="true">#</a> 你会看到什么</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:/etc$ ps x
+  PID TTY      STAT   TIME COMMAND
+ 6675 ?        S      0:00 sshd: user1@pts/0
+ 6676 pts/0    Ss     0:00 -bash
+ 8193 pts/0    R+     0:00 ps x
+user1@vm1:/etc$ ps a
+  PID TTY      STAT   TIME COMMAND
+ 1210 tty2     Ss+    0:00 /sbin/getty 38400 tty2
+ 1211 tty3     Ss+    0:00 /sbin/getty 38400 tty3
+ 1212 tty4     Ss+    0:00 /sbin/getty 38400 tty4
+ 1213 tty5     Ss+    0:00 /sbin/getty 38400 tty5
+ 1214 tty6     Ss+    0:00 /sbin/getty 38400 tty6
+ 6216 tty1     Ss+    0:00 /sbin/getty 38400 tty1
+ 6676 pts/0    Ss     0:00 -bash
+ 8194 pts/0    R+     0:00 ps a
+user1@vm1:/etc$ ps ax
+  PID TTY      STAT   TIME COMMAND
+    1 ?        Ss     0:16 init [2]
+--- skipped --- skipped --- skipped ---
+  691 ?        Ss     0:00 /sbin/portmap
+  703 ?        Ss     0:00 /sbin/rpc.statd
+  862 ?        Sl     0:00 /usr/sbin/rsyslogd -c4
+  886 ?        Ss     0:00 /usr/sbin/atd
+  971 ?        Ss     0:00 /usr/sbin/acpid
+  978 ?        Ss     0:01 /usr/sbin/cron
+ 1177 ?        Ss     0:00 /usr/sbin/sshd
+ 1191 ?        Ss     0:00 /usr/sbin/exim4 -bd -q30m
+ 1210 tty2     Ss+    0:00 /sbin/getty 38400 tty2
+ 1211 tty3     Ss+    0:00 /sbin/getty 38400 tty3
+ 1212 tty4     Ss+    0:00 /sbin/getty 38400 tty4
+ 1213 tty5     Ss+    0:00 /sbin/getty 38400 tty5
+ 1214 tty6     Ss+    0:00 /sbin/getty 38400 tty6
+ 6216 tty1     Ss+    0:00 /sbin/getty 38400 tty1
+ 6671 ?        Ss     0:00 sshd: user1 [priv]
+ 6675 ?        S      0:00 sshd: user1@pts/0
+ 6676 pts/0    Ss     0:00 -bash
+ 8198 pts/0    R+     0:00 ps ax
+user1@vm1:/etc$ ps axue --forest
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+--- skipped --- skipped --- skipped ---
+root         1  0.0  0.0   8356   820 ?        Ss   Jun06   0:16 init [2]
+root       297  0.0  0.0  16976  1000 ?        S&lt;s  Jun06   0:00 udevd --daemon
+root       392  0.0  0.0  16872   840 ?        S&lt;   Jun06   0:00  \_ udevd --daemon
+root       399  0.0  0.0  16872   836 ?        S&lt;   Jun06   0:00  \_ udevd --daemon
+daemon     691  0.0  0.0   8096   532 ?        Ss   Jun06   0:00 /sbin/portmap
+statd      703  0.0  0.0  14384   868 ?        Ss   Jun06   0:00 /sbin/rpc.statd
+root       862  0.0  0.1  54296  1664 ?        Sl   Jun06   0:00 /usr/sbin/rsyslogd -c4
+daemon     886  0.0  0.0  18716   436 ?        Ss   Jun06   0:00 /usr/sbin/atd
+root       971  0.0  0.0   3920   644 ?        Ss   Jun06   0:00 /usr/sbin/acpid
+root       978  0.0  0.0  22400   880 ?        Ss   Jun06   0:01 /usr/sbin/cron
+root      1177  0.0  0.1  49176  1136 ?        Ss   Jun06   0:00 /usr/sbin/sshd
+root      6671  0.0  0.3  70496  3284 ?        Ss   Jun26   0:00  \_ sshd: user1 [priv]
+user1     6675  0.0  0.1  70496  1584 ?        S    Jun26   0:00      \_ sshd: user1@pts/0
+user1     6676  0.0  0.6  23644  6536 pts/0    Ss   Jun26   0:00          \_ -bash LANG=en_US.UTF-8 USER=user1 LOGNAME=user1 HOM
+user1     8199  0.0  0.1  16312  1088 pts/0    R+   17:07   0:00              \_ ps axue --forest TERM=screen-bce SHELL=/bin/bas
+101       1191  0.0  0.1  44148  1076 ?        Ss   Jun06   0:00 /usr/sbin/exim4 -bd -q30m
+root      1210  0.0  0.0   5932   616 tty2     Ss+  Jun06   0:00 /sbin/getty 38400 tty2
+root      1211  0.0  0.0   5932   612 tty3     Ss+  Jun06   0:00 /sbin/getty 38400 tty3
+root      1212  0.0  0.0   5932   612 tty4     Ss+  Jun06   0:00 /sbin/getty 38400 tty4
+root      1213  0.0  0.0   5932   612 tty5     Ss+  Jun06   0:00 /sbin/getty 38400 tty5
+root      1214  0.0  0.0   5932   616 tty6     Ss+  Jun06   0:00 /sbin/getty 38400 tty6
+root      6216  0.0  0.0   5932   612 tty1     Ss+  Jun14   0:00 /sbin/getty 38400 tty1
+user1@vm1:/etc$ dd if=/dev/zero of=~/test.img bs=1 count=$((1024*1024*1024)) &amp;
+[1] 8200
+user1@vm1:/etc$ kill -s USR1 $!
+user1@vm1:/etc$ 1455424+0 records in
+1455424+0 records out
+1455424 bytes (1.5 MB) copied, 1.76646 s, 824 kB/s
+
+user1@vm1:/etc$ kill -s USR1 $!
+user1@vm1:/etc$ 3263060+0 records in
+3263060+0 records out
+3263060 bytes (3.3 MB) copied, 3.94237 s, 828 kB/s
+
+user1@vm1:/etc$ kill -s TERM $!
+user1@vm1:/etc$
+[1]+  Terminated              dd if=/dev/zero of=~/test.img bs=1 count=$((1024*1024*1024))
+user1@vm1:/etc$
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br></div></div><h2 id="解释" tabindex="-1"><a class="header-anchor" href="#解释" aria-hidden="true">#</a> 解释</h2><ol><li>打印你拥有（启动）的进程。</li><li>仅打印与终端（<code>tty</code>）相关的进程和你拥有（启动）的进程。</li><li>打印所有正在运行的进程。</li><li>以树形式打印所有正在运行的进程，并包含附加信息，例如可用的相关用户名和环境。请注意，此信息仅适用于你拥有（启动）的进程。为了查看所有进程的环境信息，请输入<code>sudo ps axue -forest</code>。</li><li>开始创建一个零填充文件（填充为空字符，现在不要纠结），并通过在末尾指定<code>&amp;</code>发送到后台。</li><li>查询<code>dd</code>的状态。</li><li>因为 bash 只能打印一些东西来回应你的输入，你需要按<code>&lt;ENTER&gt;</code>（发出空指令）。</li><li>再次查询<code>dd</code>的状态。</li><li>同样，你需要按<code>&lt;ENTER&gt;</code>来查看输出。</li><li>向<code>dd</code>发送终止信号，所以<code>dd</code>退出了。</li><li>为了看到它确实发生了，你需要再次按<code>&lt;ENTER&gt;</code>键 。</li></ol><h2 id="附加题" tabindex="-1"><a class="header-anchor" href="#附加题" aria-hidden="true">#</a> 附加题</h2><ul><li>阅读<code>man ps</code>，<code>man kill</code>。</li><li>阅读<a href="http://www.linux-tutorial.info/modules.php?name=MContent&amp;pageid=84" target="_blank" rel="noopener noreferrer">进程的生命周期<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>，并研究这张图片：<a href="http://www.linux-tutorial.info/Linux_Tutorial/The_Operating_System/The_Kernel/Processes/procflowa.gif" target="_blank" rel="noopener noreferrer">进程的工作流<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>。</li><li>打印并填写<a href="https://nixsrv.com/llthw/ex16/signals" target="_blank" rel="noopener noreferrer">信号表<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>。你可以使用 <a href="http://www.kernel.org/doc/man-pages/online/pages/man7/signal.7.html%23DESCRIPTION" target="_blank" rel="noopener noreferrer">kernel.org 中的文档<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>。</li></ul><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">上次更新: </span><!----></div><div class="meta-item contributors"><span class="meta-item-label">贡献者: </span><span class="meta-item-info"><!--[--><!--[--><span class="contributor" title="email: yzqdev@outlook.com">yzqdev</span><!----><!--]--><!--]--></span></div></footer><nav class="page-nav"><p class="inner"><span class="prev"><a href="/llthw-zh/ex15.html" class="" aria-label="练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d"><!--[--><!--]--> 练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d <!--[--><!--]--></a></span><span class="next"><a href="/llthw-zh/ex17.html" class="" aria-label="练习 17：任务调度：cron，at"><!--[--><!--]--> 练习 17：任务调度：cron，at <!--[--><!--]--></a></span></p></nav><!--[--><!--]--></main><!--]--></div><!----><!--]--></div>
+    <script type="module" src="/llthw-zh/assets/app.91d0dc40.js" defer></script>
+  </body>
+</html>

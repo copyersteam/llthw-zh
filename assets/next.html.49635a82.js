@@ -1,0 +1,1 @@
+const e={key:"v-4449eaed",path:"/next.html",title:"\u4E0B\u4E00\u6B65\u505A\u4EC0\u4E48",lang:"zh-CN",frontmatter:{},excerpt:"",headers:[],git:{updatedTime:1645875515e3,contributors:[{name:"yzqdev",email:"yzqdev@outlook.com",commits:1}]},filePathRelative:"next.md"};export{e as data};

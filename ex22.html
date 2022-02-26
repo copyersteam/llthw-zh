@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="generator" content="VuePress 2.0.0-beta.35">
+    <style>
+      :root {
+        --c-bg: #fff;
+      }
+      html.dark {
+        --c-bg: #22272e;
+      }
+      html, body {
+        background-color: var(--c-bg);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem('vuepress-color-scheme');
+			const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (userMode === 'dark' || (userMode !== 'light' && systemDarkMode)) {
+				document.documentElement.classList.toggle('dark', true);
+			}
+    </script>
+    <title>练习 22：文件系统：移动数据，tar，dd | VuePress</title><meta name="description" content="Vue 驱动的静态网站生成器">
+    <link rel="modulepreload" href="/llthw-zh/assets/app.91d0dc40.js"><link rel="modulepreload" href="/llthw-zh/assets/ex22.html.0d4c96fb.js"><link rel="modulepreload" href="/llthw-zh/assets/ex22.html.2f521152.js">
+    <link rel="stylesheet" href="/llthw-zh/assets/style.640a10cb.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><!--[--><header ref_key="navbar" class="navbar"><div class="toggle-sidebar-button" title="切换侧边栏" aria-expanded="false" role="button" tabindex="0"><div class="icon" aria-hidden="true"><span></span><span></span><span></span></div></div><span><a href="/llthw-zh/" class=""><!----><span class="site-name">VuePress</span></a></span><div class="navbar-items-wrapper" style=""><!--[--><!--]--><!----><!--[--><!--]--><button class="toggle-dark-button" title="切换夜间模式"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><form class="search-box" role="search"><input type="search" placeholder="搜索文档" autocomplete="off" spellcheck="false" value><!----></form></div></header><!--]--><div class="sidebar-mask"></div><!--[--><aside class="sidebar"><!----><!--[--><!--]--><ul class="sidebar-items"><!--[--><li><p tabindex="0" class="sidebar-item sidebar-heading active">教程 <!----></p><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a href="/llthw-zh/intro.html" class="sidebar-item" aria-label="引言"><!--[--><!--]--> 引言 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex0.html" class="sidebar-item" aria-label="练习 0：起步"><!--[--><!--]--> 练习 0：起步 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex1.html" class="sidebar-item" aria-label="练习 1：文本编辑器，vim"><!--[--><!--]--> 练习 1：文本编辑器，vim <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex2.html" class="sidebar-item" aria-label="练习 2：文本浏览器，少即是多"><!--[--><!--]--> 练习 2：文本浏览器，少即是多 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex3.html" class="sidebar-item" aria-label="练习 3：Bash：Shell、.profile、.bashrc、.bash_history。"><!--[--><!--]--> 练习 3：Bash：Shell、.profile、.bashrc、.bash_history。 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex4.html" class="sidebar-item" aria-label="练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch"><!--[--><!--]--> 练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex5.html" class="sidebar-item" aria-label="练习 5：Bash：环境变量，env，set，export"><!--[--><!--]--> 练习 5：Bash：环境变量，env，set，export <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex6.html" class="sidebar-item" aria-label="练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales"><!--[--><!--]--> 练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex7.html" class="sidebar-item" aria-label="练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv"><!--[--><!--]--> 练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex8.html" class="sidebar-item" aria-label="练习 8：更多的重定向和过滤：head，tail，awk，grep，sed"><!--[--><!--]--> 练习 8：更多的重定向和过滤：head，tail，awk，grep，sed <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex9.html" class="sidebar-item" aria-label="练习 9：Bash：任务控制，jobs，fg"><!--[--><!--]--> 练习 9：Bash：任务控制，jobs，fg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex10.html" class="sidebar-item" aria-label="练习 10：Bash：程序退出代码（返回状态）"><!--[--><!--]--> 练习 10：Bash：程序退出代码（返回状态） <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex11.html" class="sidebar-item" aria-label="练习 11：总结"><!--[--><!--]--> 练习 11：总结 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex12.html" class="sidebar-item" aria-label="练习 12：文档：man，info"><!--[--><!--]--> 练习 12：文档：man，info <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex13.html" class="sidebar-item" aria-label="练习 13：文档：Google"><!--[--><!--]--> 练习 13：文档：Google <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex14.html" class="sidebar-item" aria-label="练习 14：包管理：Debian 包管理工具aptitude"><!--[--><!--]--> 练习 14：包管理：Debian 包管理工具aptitude <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex15.html" class="sidebar-item" aria-label="练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d"><!--[--><!--]--> 练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex16.html" class="sidebar-item" aria-label="练习 16：处理进程，ps，kill"><!--[--><!--]--> 练习 16：处理进程，ps，kill <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex17.html" class="sidebar-item" aria-label="练习 17：任务调度：cron，at"><!--[--><!--]--> 练习 17：任务调度：cron，at <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex18.html" class="sidebar-item" aria-label="练习 18：日志：/var/log，rsyslog，logger"><!--[--><!--]--> 练习 18：日志：/var/log，rsyslog，logger <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex19.html" class="sidebar-item" aria-label="练习 19：文件系统：挂载，mount，/etc/fstab"><!--[--><!--]--> 练习 19：文件系统：挂载，mount，/etc/fstab <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex20.html" class="sidebar-item" aria-label="练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs"><!--[--><!--]--> 练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex21.html" class="sidebar-item" aria-label="练习 21：文件系统：修改根目录，chroot"><!--[--><!--]--> 练习 21：文件系统：修改根目录，chroot <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex22.html" class="router-link-active router-link-exact-active router-link-active sidebar-item active" aria-label="练习 22：文件系统：移动数据，tar，dd"><!--[--><!--]--> 练习 22：文件系统：移动数据，tar，dd <!--[--><!--]--></a><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a aria-current="page" href="/llthw-zh/ex22.html#这样做" class="router-link-active router-link-exact-active sidebar-item" aria-label="这样做"><!--[--><!--]--> 这样做 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex22.html#你会看到什么" class="router-link-active router-link-exact-active sidebar-item" aria-label="你会看到什么"><!--[--><!--]--> 你会看到什么 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex22.html#解释" class="router-link-active router-link-exact-active sidebar-item" aria-label="解释"><!--[--><!--]--> 解释 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex22.html#附加题" class="router-link-active router-link-exact-active sidebar-item" aria-label="附加题"><!--[--><!--]--> 附加题 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><li><a href="/llthw-zh/ex23.html" class="sidebar-item" aria-label="练习 23：文件系统：权限，chown，chmod，umask"><!--[--><!--]--> 练习 23：文件系统：权限，chown，chmod，umask <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex24.html" class="sidebar-item" aria-label="练习 24：接口配置，ifconfig，netstat，iproute2，ss，route"><!--[--><!--]--> 练习 24：接口配置，ifconfig，netstat，iproute2，ss，route <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex25.html" class="sidebar-item" aria-label="练习 25：网络：配置文件，/etc/network/interfaces"><!--[--><!--]--> 练习 25：网络：配置文件，/etc/network/interfaces <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex26.html" class="sidebar-item" aria-label="练习 26：网络：封包过滤配置，iptables"><!--[--><!--]--> 练习 26：网络：封包过滤配置，iptables <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex27.html" class="sidebar-item" aria-label="练习 27：安全 Shell，ssh，sshd，scp"><!--[--><!--]--> 练习 27：安全 Shell，ssh，sshd，scp <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex28.html" class="sidebar-item" aria-label="练习 28：性能：获取性能情况，uptime，free，top"><!--[--><!--]--> 练习 28：性能：获取性能情况，uptime，free，top <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex29.html" class="sidebar-item" aria-label="练习 29：内核：内核消息，dmesg"><!--[--><!--]--> 练习 29：内核：内核消息，dmesg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex30.html" class="sidebar-item" aria-label="练习 30：打磨、洗练、重复：总复习"><!--[--><!--]--> 练习 30：打磨、洗练、重复：总复习 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/next.html" class="sidebar-item" aria-label="下一步做什么"><!--[--><!--]--> 下一步做什么 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/mdi.html" class="sidebar-item" aria-label="Debian 手动安装"><!--[--><!--]--> Debian 手动安装 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><!--]--></ul><!--[--><!--]--></aside><!--]--><!--[--><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><h1 id="练习-22-文件系统-移动数据-tar-dd" tabindex="-1"><a class="header-anchor" href="#练习-22-文件系统-移动数据-tar-dd" aria-hidden="true">#</a> 练习 22：文件系统：移动数据，<code>tar</code>，<code>dd</code></h1><blockquote><p>原文：<a href="https://archive.fo/JSknE" target="_blank" rel="noopener noreferrer">Exercise 22. Filesystems: moving data around: tar, dd<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>译者：<a href="https://github.com/wizardforcel" target="_blank" rel="noopener noreferrer">飞龙<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>协议：<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>自豪地采用<a href="https://translate.google.cn/" target="_blank" rel="noopener noreferrer">谷歌翻译<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><p>现在是时候自己看看了，Linux 中的所有东西只是一个文件。</p><p>这个练习是一个很大的练习，但是看看你学到了什么。完成之后，在<code>man</code>中查看所有故意不解释的程序参数，，并试图自己解释每个命令的作用。</p><p>现在你将学习如何玩转数据。</p><h2 id="这样做" tabindex="-1"><a class="header-anchor" href="#这样做" aria-hidden="true">#</a> 这样做</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code> 1: tar -czvf root.tgz /opt/root/
+ 2: tar -tzvf root.tgz
+ 3: cd /tmp
+ 4: tar -zxvf ~/root.tgz
+ 5: ls -al
+ 6: dd_if=$(mount | grep /tmp | cut -d &#39; &#39; -f 1) &amp;&amp; echo $dd_if
+ 7: sudo dd if=$dd_if of=~/tmp.img bs=10M
+ 8: cd &amp;&amp; ls -alh
+ 9: sudo losetup /dev/loop1 ~/tmp.img &amp;&amp; sudo mount /dev/loop1 /mnt/
+10: ls -al /mnt
+11: sudo umount /mnt &amp;&amp; sudo losetup -d /dev/loop1
+12: sudo umount $dd_if &amp;&amp; sudo mkfs.ext3 $dd_if
+13: new_uuid=$(sudo tune2fs -l $dd_if | awk &#39;/UUID/{print $3}&#39;) &amp;&amp; echo $new_uuid
+14: grep &#39;/tmp&#39; /etc/fstab
+15: sed &quot;s/^UUID=.*\/tmp\s\+ext3\s\+defaults\s\+[0-9]\s\+[0-9]\s\?/UUID=$new_uuid \/tmp ext3 defaults 0 2/&quot; /etc/fstab
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br></div></div><p>现在使用<code>sudo tune2fs -l</code>和<code>sudo blkid</code>检查输出。如果<code>/etc/fstab</code>中的 UUID 替换看起来正常，执行实际的替换。</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>16: sudo sed -i&#39;.bak&#39; &quot;s/^UUID=.*\/tmp\s\+ext3\s\+defaults\s\+[0-9]\s\+[0-9]\s\?/UUID=$new_uuid \/tmp ext3 defaults 0 2/&quot; /etc/fstab
+17: sudo mount -a &amp;&amp; ls /tmp
+18: sudo umount /tmp &amp;&amp; pv ~/tmp.img | sudo dd of=$dd_if bs=10M
+19: new_uuid=$(sudo tune2fs -l $dd_if | awk &#39;/UUID/{print $3}&#39;) &amp;&amp; echo $new_uuid
+20: sudo sed -i&#39;.bak&#39; &quot;s/^UUID=.*\/tmp\s\+ext3\s\+defaults\s\+[0-9]\s\+[0-9]\s\?/UUID=$new_uuid \/tmp ext3 defaults 0 2/&quot; /etc/fstab
+21: sudo mount -a
+22: rm -v tmp.img
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br></div></div><p>输入<code>y</code>并按下<code>&lt;ENTER&gt;</code>。</p><h2 id="你会看到什么" tabindex="-1"><a class="header-anchor" href="#你会看到什么" aria-hidden="true">#</a> 你会看到什么</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ tar -czvf root.tgz /opt/root/
+tar: Removing leading &#39;/&#39; from member names
+/opt/root/
+/opt/root/bin/
+/opt/root/bin/bash
+/opt/root/lib64/
+/opt/root/lib64/ld-linux-x86-64.so.2
+/opt/root/lib/
+/opt/root/lib/libdl.so.2
+/opt/root/lib/libncurses.so.5
+/opt/root/lib/libc.so.6
+user1@vm1:~$ tar -tzvf root.tgz
+drwxr-xr-x root/root         0 2012-07-05 03:14 opt/root/
+drwxr-xr-x root/root         0 2012-07-05 03:14 opt/root/bin/
+-rwxr-xr-x root/root    926536 2012-07-05 03:14 opt/root/bin/bash
+drwxr-xr-x root/root         0 2012-07-05 03:14 opt/root/lib64/
+-rwxr-xr-x root/root    128744 2012-07-05 03:14 opt/root/lib64/ld-linux-x86-64.so.2
+drwxr-xr-x root/root         0 2012-07-05 03:14 opt/root/lib/
+-rw-r--r-- root/root     14696 2012-07-05 03:14 opt/root/lib/libdl.so.2
+-rw-r--r-- root/root    286776 2012-07-05 03:14 opt/root/lib/libncurses.so.5
+-rwxr-xr-x root/root   1437064 2012-07-05 03:14 opt/root/lib/libc.so.6
+user1@vm1:~$ cd /tmp
+user1@vm1:/tmp$ tar -zxvf ~/root.tgz
+opt/root/
+opt/root/bin/
+opt/root/bin/bash
+opt/root/lib64/
+opt/root/lib64/ld-linux-x86-64.so.2
+opt/root/lib/
+opt/root/lib/libdl.so.2
+opt/root/lib/libncurses.so.5
+opt/root/lib/libc.so.6
+user1@vm1:/tmp$ ls -al
+total 19
+drwxrwxrwt  6 root  root   1024 Jul  5 04:17 .
+drwxr-xr-x 22 root  root   1024 Jul  3 08:29 ..
+drwxrwxrwt  2 root  root   1024 Jul  3 08:41 .ICE-unix
+drwx------  2 root  root  12288 Jul  3 07:47 lost+found
+drwxr-xr-x  3 user1 user1  1024 Jul  5 03:24 opt
+-rw-r--r--  1 root  root    489 Jul  3 10:14 sources.list
+-r--r-----  1 root  root    491 Jul  3 10:21 sudoers
+drwxrwxrwt  2 root  root   1024 Jul  3 08:41 .X11-unix
+user1@vm1:/tmp$ dd_if=$(mount | grep /tmp | cut -d &#39; &#39; -f 1) &amp;&amp; echo $dd_if
+/dev/sda8
+user1@vm1:~$ cd &amp;&amp; ls -alh
+total 243M
+drwxr-xr-x 3 user1 user1 4.0K Jul  5 04:27 .
+drwxr-xr-x 4 root  root  4.0K Jul  3 08:39 ..
+-rw------- 1 user1 user1   22 Jul  3 10:45 .bash_history
+-rw-r--r-- 1 user1 user1  220 Jul  3 08:39 .bash_logout
+-rw-r--r-- 1 user1 user1 3.2K Jul  3 08:39 .bashrc
+-rw------- 1 user1 user1   52 Jul  5 04:12 .lesshst
+drwxr-xr-x 3 user1 user1 4.0K Jul  5 03:23 opt
+-rw-r--r-- 1 user1 user1  675 Jul  3 08:39 .profile
+-rw-r--r-- 1 user1 user1 1.3M Jul  5 04:25 root.tgz
+-rw-r--r-- 1 root  root  241M Jul  5 04:36 tmp.img
+user1@vm1:~$ sudo losetup /dev/loop1 ~/tmp.img &amp;&amp; sudo mount /dev/loop1 /mnt/
+user1@vm1:~$ ls -al /mnt
+total 19
+drwxrwxrwt  6 root  root   1024 Jul  5 04:17 .
+drwxr-xr-x 22 root  root   1024 Jul  3 08:29 ..
+drwxrwxrwt  2 root  root   1024 Jul  3 08:41 .ICE-unix
+drwx------  2 root  root  12288 Jul  3 07:47 lost+found
+drwxr-xr-x  3 user1 user1  1024 Jul  5 03:24 opt
+-rw-r--r--  1 root  root    489 Jul  3 10:14 sources.list
+-r--r-----  1 root  root    491 Jul  3 10:21 sudoers
+drwxrwxrwt  2 root  root   1024 Jul  3 08:41 .X11-unix
+user1@vm1:~$ sudo umount /mnt &amp;&amp; sudo losetup -d /dev/loop1
+user1@vm1:~$ sudo umount $dd_if &amp;&amp; sudo mkfs.ext3 $dd_if
+mke2fs 1.41.12 (17-May-2010)
+Filesystem label=
+OS type: Linux
+Block size=1024 (log=0)
+Fragment size=1024 (log=0)
+Stride=0 blocks, Stripe width=0 blocks
+61752 inodes, 246784 blocks
+12339 blocks (5.00%) reserved for the super user
+First data block=1
+Maximum filesystem blocks=67371008
+31 block groups
+8192 blocks per group, 8192 fragments per group
+1992 inodes per group
+Superblock backups stored on blocks:
+        8193, 24577, 40961, 57345, 73729, 204801, 221185
+ 
+Writing inode tables: done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+ 
+This filesystem will be automatically checked every 27 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.
+user1@vm1:~$ new_uuid=$(sudo tune2fs -l $dd_if | awk &#39;/UUID/{print $3}&#39;) &amp;&amp; echo $new_uuid
+f8288adc-3ef9-4a6e-aab2-92624276b8ba
+user1@vm1:~$ grep &#39;/tmp&#39; /etc/fstab
+# /tmp was on /dev/sda8 during installation
+UUID=011b4530-e4a9-4d13-926b-48d9e33b64bf /tmp ext3 defaults 0 2
+user1@vm1:~$ sed &quot;s/^UUID=.*\/tmp\s\+ext3\s\+defaults\s\+[0-9]\s\+[0-9]\s\?/UUID=$new_uuid \/tmp ext3 defaults 0 2/&quot; /etc/fstab
+# /etc/fstab: static file system information.
+#
+# Use &#39;blkid&#39; to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# &lt;file system&gt; &lt;mount point&gt;   &lt;type&gt;  &lt;options&gt;       &lt;dump&gt;  &lt;pass&gt;
+proc            /proc           proc    defaults        0       0
+# / was on /dev/sda1 during installation
+UUID=91aacf33-0b35-474c-9c61-311e04b0bed1 /               ext3    errors=remount-ro 0       1
+# /home was on /dev/sda9 during installation
+UUID=e27b0efb-8cf0-439c-9ebe-d59c927dd590 /home           ext3    defaults        0       2
+# /tmp was on /dev/sda8 during installation
+UUID=f8288adc-3ef9-4a6e-aab2-92624276b8ba /tmp ext3 defaults 0 2
+# /usr was on /dev/sda5 during installation
+UUID=9f49821b-7f94-4915-b9a9-ed9f12bb6847 /usr            ext3    defaults        0       2
+# /var was on /dev/sda6 during installation
+UUID=b7e908a1-a1cd-4d5c-bc79-c3a99d003e7c /var            ext3    defaults        0       2
+# swap was on /dev/sda7 during installation
+UUID=292981d7-5a17-488f-8d9a-176b65f45d46 none            swap    sw              0       0
+/dev/scd0       /media/cdrom0   udf,iso9660 user,noauto     0       0
+sudo sed -i&#39;.bak&#39; &quot;s/^UUID=.*\/tmp\s\+ext3\s\+defaults\s\+[0-9]\s\+[0-9]\s\?/UUID=$new_uuid \/tmp ext3 defaults 0 2/&quot; /etc/fstab
+sudo mount -a &amp;&amp; ls /tmp
+user1@vm1:~$ sudo umount /tmp &amp;&amp; pv ~/tmp.img | sudo dd of=$dd_if bs=10M
+ 241MB 0:00:04 [54.2MB/s] [===============================================================================================================&gt;] 100%
+0+1928 records in
+0+1928 records out
+252706816 bytes (253 MB) copied, 5.52494 s, 45.7 MB/s
+user1@vm1:~$ rm -v tmp.img
+rm: remove write-protected regular file `tmp.img&#39;? y
+removed `tmp.img&#39;
+user1@vm1:~$
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br></div></div><h2 id="解释" tabindex="-1"><a class="header-anchor" href="#解释" aria-hidden="true">#</a> 解释</h2><ol><li><p>在你的主目录中创建归档或<code>/opt/root/</code>。归档文件的扩展名是<code>.tgz</code>，因为这个归档实际上由两部分组成，就像是俄罗斯套娃。第一部分由字母<code>t</code>指定，是一个大文件，其中所有归档文件由程序<code>tar</code>合并。第二部分由字母<code>gz</code>指定 ，意味着<code>tar</code>调用<code>gzip</code>程序来压缩它。</p></li><li><p>测试这个归档。</p></li><li><p>将目录更改为<code>/tmp</code>。</p></li><li><p>解压你的归档。</p></li><li><p>打印目录内容。</p></li><li><p>提取挂载在<code>/tmp</code>上的分区的名称，将其存储在<code>dd_if</code>变量中，如果提取成功，打印出<code>dd_if</code>值。<code>if</code>代表输入文件。</p></li><li><p>将整个分区复制到你的主目录中的<code>tmp.img</code>。dd 使用超级用户调用，因为你正在访问代表你的分区的文件<code>/dev/sda8</code>，该分区对普通用户不可访问。</p></li><li><p>将目录更改为你的主目录并打印出其内容。</p></li><li><p>告诉 Linux 将<code>tmp.img</code>文件用作（一种）物理分区并挂载它。</p></li><li><p>打印出<code>tmp.img</code>的内容。你可以看到它真的是<code>/tmp</code>的精确副本 。</p></li><li></li><li><p>解除挂载<code>tmp.img</code>，并告诉 Linux 停止将其看做分区。</p></li><li><p>解除挂载<code>/tmp</code>并在那里创建新的文件系统，删除该过程中的所有东西。</p></li><li><p>提取你的新<code>/tmp</code>文件系统的UUID ，将其存储在<code>new_uuid</code>中，并打印出来。</p></li><li><p>从<code>/etc/fstab</code>中打印描述旧的<code>/tmp</code>分区的一行。</p></li><li><p>向你展示，修改后的<code>/etc/fstab</code>如何工作。通过使用正则表达式来完成，这个表达式用作掩码，定义了这一行：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>UUID=f8288adc-3ef9-4a6e-aab2-92624276b8ba /tmp ext3 defaults 0 2
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br></div></div><p>完成这本书后，我会给你一个链接，让你学习如何创建这样的正则表达式。</p></li><li><p>使用新的 UUID 实际替换<code>/tmp</code>旧的 UUID。</p></li><li><p>挂载<code>/etc/fstab</code>中描述的所有文件系统，并列出新<code>/tmp</code>的内容</p></li><li><p>解除挂载新的<code>/tmp</code>并从<code>tmp.img</code>恢复旧<code>/tmp</code>。</p></li><li><p>获取旧<code>/tmp</code>的 UUID，它实际上与创建新文件系统之前相同，因为<code>tmp.img</code>是旧的<code>/ tmp</code>的完美副本。</p></li><li><p>在<code>/etc/fstab</code>中用旧的 UUID 替换新的 UUID 。</p></li><li><p>从<code>/etc/fstab</code>挂载所有文件系统。如果此命令不会导致错误，你可能一切正常。恭喜。</p></li><li><p>从你的主目录中删除<code>tmp.img</code>。</p></li></ol><h2 id="附加题" tabindex="-1"><a class="header-anchor" href="#附加题" aria-hidden="true">#</a> 附加题</h2><ul><li>尝试详细解释每个命令的作用。拿出一张纸，把它全部写出来。在<code>man</code>中查找在所有不能很好理解的命令和参数。</li><li>这个有些过早了，但为什么你能作为<code>user1</code>来发出删除命令，从你的主目录中删除<code>tmp.img</code>，考虑到<code>tmp.img</code>由 root 创建？</li></ul><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">上次更新: </span><!----></div><div class="meta-item contributors"><span class="meta-item-label">贡献者: </span><span class="meta-item-info"><!--[--><!--[--><span class="contributor" title="email: yzqdev@outlook.com">yzqdev</span><!----><!--]--><!--]--></span></div></footer><nav class="page-nav"><p class="inner"><span class="prev"><a href="/llthw-zh/ex21.html" class="" aria-label="练习 21：文件系统：修改根目录，chroot"><!--[--><!--]--> 练习 21：文件系统：修改根目录，chroot <!--[--><!--]--></a></span><span class="next"><a href="/llthw-zh/ex23.html" class="" aria-label="练习 23：文件系统：权限，chown，chmod，umask"><!--[--><!--]--> 练习 23：文件系统：权限，chown，chmod，umask <!--[--><!--]--></a></span></p></nav><!--[--><!--]--></main><!--]--></div><!----><!--]--></div>
+    <script type="module" src="/llthw-zh/assets/app.91d0dc40.js" defer></script>
+  </body>
+</html>

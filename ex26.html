@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="generator" content="VuePress 2.0.0-beta.35">
+    <style>
+      :root {
+        --c-bg: #fff;
+      }
+      html.dark {
+        --c-bg: #22272e;
+      }
+      html, body {
+        background-color: var(--c-bg);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem('vuepress-color-scheme');
+			const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (userMode === 'dark' || (userMode !== 'light' && systemDarkMode)) {
+				document.documentElement.classList.toggle('dark', true);
+			}
+    </script>
+    <title>练习 26：网络：封包过滤配置，iptables | VuePress</title><meta name="description" content="Vue 驱动的静态网站生成器">
+    <link rel="modulepreload" href="/llthw-zh/assets/app.91d0dc40.js"><link rel="modulepreload" href="/llthw-zh/assets/ex26.html.84f268b4.js"><link rel="modulepreload" href="/llthw-zh/assets/ex26.html.63e6dc94.js">
+    <link rel="stylesheet" href="/llthw-zh/assets/style.640a10cb.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><!--[--><header ref_key="navbar" class="navbar"><div class="toggle-sidebar-button" title="切换侧边栏" aria-expanded="false" role="button" tabindex="0"><div class="icon" aria-hidden="true"><span></span><span></span><span></span></div></div><span><a href="/llthw-zh/" class=""><!----><span class="site-name">VuePress</span></a></span><div class="navbar-items-wrapper" style=""><!--[--><!--]--><!----><!--[--><!--]--><button class="toggle-dark-button" title="切换夜间模式"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><form class="search-box" role="search"><input type="search" placeholder="搜索文档" autocomplete="off" spellcheck="false" value><!----></form></div></header><!--]--><div class="sidebar-mask"></div><!--[--><aside class="sidebar"><!----><!--[--><!--]--><ul class="sidebar-items"><!--[--><li><p tabindex="0" class="sidebar-item sidebar-heading active">教程 <!----></p><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a href="/llthw-zh/intro.html" class="sidebar-item" aria-label="引言"><!--[--><!--]--> 引言 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex0.html" class="sidebar-item" aria-label="练习 0：起步"><!--[--><!--]--> 练习 0：起步 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex1.html" class="sidebar-item" aria-label="练习 1：文本编辑器，vim"><!--[--><!--]--> 练习 1：文本编辑器，vim <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex2.html" class="sidebar-item" aria-label="练习 2：文本浏览器，少即是多"><!--[--><!--]--> 练习 2：文本浏览器，少即是多 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex3.html" class="sidebar-item" aria-label="练习 3：Bash：Shell、.profile、.bashrc、.bash_history。"><!--[--><!--]--> 练习 3：Bash：Shell、.profile、.bashrc、.bash_history。 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex4.html" class="sidebar-item" aria-label="练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch"><!--[--><!--]--> 练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex5.html" class="sidebar-item" aria-label="练习 5：Bash：环境变量，env，set，export"><!--[--><!--]--> 练习 5：Bash：环境变量，env，set，export <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex6.html" class="sidebar-item" aria-label="练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales"><!--[--><!--]--> 练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex7.html" class="sidebar-item" aria-label="练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv"><!--[--><!--]--> 练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex8.html" class="sidebar-item" aria-label="练习 8：更多的重定向和过滤：head，tail，awk，grep，sed"><!--[--><!--]--> 练习 8：更多的重定向和过滤：head，tail，awk，grep，sed <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex9.html" class="sidebar-item" aria-label="练习 9：Bash：任务控制，jobs，fg"><!--[--><!--]--> 练习 9：Bash：任务控制，jobs，fg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex10.html" class="sidebar-item" aria-label="练习 10：Bash：程序退出代码（返回状态）"><!--[--><!--]--> 练习 10：Bash：程序退出代码（返回状态） <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex11.html" class="sidebar-item" aria-label="练习 11：总结"><!--[--><!--]--> 练习 11：总结 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex12.html" class="sidebar-item" aria-label="练习 12：文档：man，info"><!--[--><!--]--> 练习 12：文档：man，info <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex13.html" class="sidebar-item" aria-label="练习 13：文档：Google"><!--[--><!--]--> 练习 13：文档：Google <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex14.html" class="sidebar-item" aria-label="练习 14：包管理：Debian 包管理工具aptitude"><!--[--><!--]--> 练习 14：包管理：Debian 包管理工具aptitude <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex15.html" class="sidebar-item" aria-label="练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d"><!--[--><!--]--> 练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex16.html" class="sidebar-item" aria-label="练习 16：处理进程，ps，kill"><!--[--><!--]--> 练习 16：处理进程，ps，kill <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex17.html" class="sidebar-item" aria-label="练习 17：任务调度：cron，at"><!--[--><!--]--> 练习 17：任务调度：cron，at <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex18.html" class="sidebar-item" aria-label="练习 18：日志：/var/log，rsyslog，logger"><!--[--><!--]--> 练习 18：日志：/var/log，rsyslog，logger <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex19.html" class="sidebar-item" aria-label="练习 19：文件系统：挂载，mount，/etc/fstab"><!--[--><!--]--> 练习 19：文件系统：挂载，mount，/etc/fstab <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex20.html" class="sidebar-item" aria-label="练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs"><!--[--><!--]--> 练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex21.html" class="sidebar-item" aria-label="练习 21：文件系统：修改根目录，chroot"><!--[--><!--]--> 练习 21：文件系统：修改根目录，chroot <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex22.html" class="sidebar-item" aria-label="练习 22：文件系统：移动数据，tar，dd"><!--[--><!--]--> 练习 22：文件系统：移动数据，tar，dd <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex23.html" class="sidebar-item" aria-label="练习 23：文件系统：权限，chown，chmod，umask"><!--[--><!--]--> 练习 23：文件系统：权限，chown，chmod，umask <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex24.html" class="sidebar-item" aria-label="练习 24：接口配置，ifconfig，netstat，iproute2，ss，route"><!--[--><!--]--> 练习 24：接口配置，ifconfig，netstat，iproute2，ss，route <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex25.html" class="sidebar-item" aria-label="练习 25：网络：配置文件，/etc/network/interfaces"><!--[--><!--]--> 练习 25：网络：配置文件，/etc/network/interfaces <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex26.html" class="router-link-active router-link-exact-active router-link-active sidebar-item active" aria-label="练习 26：网络：封包过滤配置，iptables"><!--[--><!--]--> 练习 26：网络：封包过滤配置，iptables <!--[--><!--]--></a><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a aria-current="page" href="/llthw-zh/ex26.html#这样做" class="router-link-active router-link-exact-active sidebar-item" aria-label="这样做"><!--[--><!--]--> 这样做 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex26.html#你会看到什么" class="router-link-active router-link-exact-active sidebar-item" aria-label="你会看到什么"><!--[--><!--]--> 你会看到什么 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex26.html#解释" class="router-link-active router-link-exact-active sidebar-item" aria-label="解释"><!--[--><!--]--> 解释 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex26.html#附加题" class="router-link-active router-link-exact-active sidebar-item" aria-label="附加题"><!--[--><!--]--> 附加题 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><li><a href="/llthw-zh/ex27.html" class="sidebar-item" aria-label="练习 27：安全 Shell，ssh，sshd，scp"><!--[--><!--]--> 练习 27：安全 Shell，ssh，sshd，scp <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex28.html" class="sidebar-item" aria-label="练习 28：性能：获取性能情况，uptime，free，top"><!--[--><!--]--> 练习 28：性能：获取性能情况，uptime，free，top <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex29.html" class="sidebar-item" aria-label="练习 29：内核：内核消息，dmesg"><!--[--><!--]--> 练习 29：内核：内核消息，dmesg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex30.html" class="sidebar-item" aria-label="练习 30：打磨、洗练、重复：总复习"><!--[--><!--]--> 练习 30：打磨、洗练、重复：总复习 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/next.html" class="sidebar-item" aria-label="下一步做什么"><!--[--><!--]--> 下一步做什么 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/mdi.html" class="sidebar-item" aria-label="Debian 手动安装"><!--[--><!--]--> Debian 手动安装 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><!--]--></ul><!--[--><!--]--></aside><!--]--><!--[--><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><h1 id="练习-26-网络-封包过滤配置-iptables" tabindex="-1"><a class="header-anchor" href="#练习-26-网络-封包过滤配置-iptables" aria-hidden="true">#</a> 练习 26：网络：封包过滤配置，<code>iptables</code></h1><blockquote><p>原文：<a href="https://archive.fo/D3zbt" target="_blank" rel="noopener noreferrer">Exercise 26. Networking: packet filter configuration, iptables<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>译者：<a href="https://github.com/wizardforcel" target="_blank" rel="noopener noreferrer">飞龙<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>协议：<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>自豪地采用<a href="https://translate.google.cn/" target="_blank" rel="noopener noreferrer">谷歌翻译<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><p>让我以引用维基百科上的<a href="http://en.wikipedia.org/wiki/Iptables" target="_blank" rel="noopener noreferrer"><code>iptables</code><span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>来开始：</p><blockquote><p><code>iptables</code>是一个用户态应用程序，允许系统管理员配置由 Linux 内核防火墙（实现为不同的 Netfilter 模块）提供的表，以及它存储的链和规则。不同的内核模块和程序目前用于不同的协议；<code>iptables</code>适用于 IPv4，<code>ip6tables</code>适用于 IPv6，<code>arptables</code>适用于 ARP，<code>ebtables</code>适用于以太网帧。</p></blockquote><p>为了使用它，你必须了解以下概念：</p><ul><li><a href="http://www.tcpdump.org/linktypes/LINKTYPE_LINUX_SLL.html" target="_blank" rel="noopener noreferrer"><code>LINKTYPE_LINUX_SLL</code><span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> - <code>tcpdump</code>伪链路层协议。</li><li><a href="http://en.wikipedia.org/wiki/Ethernet_frame%23Header" target="_blank" rel="noopener noreferrer">以太网帧头部<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> - 以太网链路上的数据包称为以太网帧。帧以前缀和起始分隔符开始。接下来，每个以太网帧都有一个头部，其特征为源和目标 MAC 地址。帧的中间部分是载荷数据，包含帧中携带的其他协议（例如，互联网协议）的任何头部。该帧以 32 位循环冗余校验（CRC）结束，用于检测传输中数据的任何损坏。</li><li><a href="http://en.wikipedia.org/wiki/IPv4_header%23IPv4%20header" target="_blank" rel="noopener noreferrer">IPv4 头部<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> - IP 封包包括头部部分和数据部分。IPv4 封包头部由 14 个字段组成，其中 13 个是必需的。第十四个字段是可选的，适当地命名为：<code>options</code>。</li><li><a href="http://en.wikipedia.org/wiki/Transmission_Control_Protocol%23TCP_segment_structure" target="_blank" rel="noopener noreferrer">TCP 段结构<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> - 传输控制协议接受来自数据流的数据，将其分割成块，并添加 TCP 头部来创建 TCP 段。TCP 段然后被封装成互联网协议（IP）数据报。TCP 段是“信息封包，TCP 用于与对方交换数据”。</li></ul><p>我会提醒你，让你获取一些指南：</p><ul><li>阅读相应的维基百科文章，直到你至少表面上理解了它（但是深入研究当然更好）。 <ul><li>展开站点左侧的 IP 地址树节点，并通过它来以你的方式实现。</li><li>展开 TCP 树节点并执行相同操作。</li></ul></li><li>阅读 <a href="http://www.iptables.org/documentation/HOWTO//networking-concepts-HOWTO-3.html%23ss3.1" target="_blank" rel="noopener noreferrer">Linux 网络概念介绍<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>。这本指南很好，因为它甚至承认 互联网是为情欲而生的。</li></ul><p>比起 <a href="http://www.linuxhomenetworking.com/wiki/index.php/Quick_HOWTO_:_Ch14_:_Linux_Firewalls_Using_iptables" target="_blank" rel="noopener noreferrer">Peter Harrison 的优秀指南<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>，我没办法更好地描述<code>iptables</code>了。如果你从未使用过它，请先阅读本指南。</p><p>但是，我将会将理论付诸实践，并 在数据交换的一个非常简单的情况下，逐步展示出<code>iptalbes</code>内部的内容。第一件事情是主要概念：</p><p><code>iptables</code> - 用于在 Linux 内核中设置，维护和检查 IPv4 包过滤规则表的程序。可以定义几个不同的表。每个表包含多个内置链，并且还可以包含用户定义的链。 <code>ip6tables</code> - 用于 IPv6 的相同东西。 链 - 可以匹配一组数据包的规则列表。每个规则规定了，如何处理匹配的数据包。这被称为目标，它可能是相同表中的，用户定义的链的跳转。 目标 - 防火墙规则为封包和目标指定了判别标准。如果数据包不匹配，就会检查的链中的下一个规则；如果它匹配，则下一个规则由目标的值指定，该值可以是用户定义链的名称或特殊值之一：</p><p><code>ACCEPT</code> - 让包通过。 <code>DROP</code> - 将数据包丢弃。 <code>QUEUE</code> - 将数据包传递给用户空间。 <code>RETURN</code> - 停止遍历此链，并在上一个（调用）链中的下一个规则处恢复。如果达到了内置链的结尾，或者内置链中的一个带有<code>RETURN</code>的规则匹配它，链策略指定的目标决定了数据包的命运。</p><p>现在让我们看看有什么默认的表和内置的链：</p><table><thead><tr><th>表名</th><th>内置链</th><th>描述</th></tr></thead><tbody><tr><td><code>raw</code></td><td></td><td>该表主要用于配置与<code>NOTRACK</code>目标结合的连接跟踪的免除。它以较高的优先级在<code>netfilter</code>钩子中注册，因此在<code>ip_conntrack</code>或任何其他 IP 表之前调用。</td></tr><tr><td></td><td>PREROUTING</td><td>用于经过任何网络接口到达的封包。</td></tr><tr><td></td><td>OUTPUT</td><td>用于本地进程生成的封包。</td></tr><tr><td><code>mangle</code></td><td></td><td>该表用于专门的数据包更改。</td></tr><tr><td></td><td>PREROUTING</td><td>用于在路由之前更改传入的数据包。</td></tr><tr><td></td><td>OUTPUT</td><td>用于在路由之前更改本地生成的数据包。</td></tr><tr><td></td><td>INPUT</td><td>用于进入本机的数据包。</td></tr><tr><td></td><td>FORWARD</td><td>用于经过本机的数据包。</td></tr><tr><td></td><td>POSTROUTING</td><td>用于当数据包打算出去时，更改它们。</td></tr><tr><td><code>nat</code></td><td></td><td>当遇到创建新连接的数据包时，将查看此表。</td></tr><tr><td></td><td>PREROUTING</td><td>用于一旦数据包进来，就更改它们。</td></tr><tr><td></td><td>OUTPUT</td><td>用于在路由之前更改本地生成的数据包。</td></tr><tr><td></td><td>POSTROUTING</td><td>用于当数据包打算出去时，更改它们。</td></tr><tr><td><code>filter</code></td><td></td><td>这是默认表（如果没有传入<code>-t</code>选项）。</td></tr><tr><td></td><td>INPUT</td><td>用于发往本地套接字的数据包。</td></tr><tr><td></td><td>FORWARD</td><td>用于经过本机的数据包。</td></tr><tr><td></td><td>OUTPUT</td><td>用于本地生成的数据包。</td></tr></tbody></table><p>好的，我们准备看看它实际如何运作。我会从我的家用计算机，使用 TCP 协议和<code>netcat</code>向<code>vm1</code>发送一个字符串<code>Hello world!</code>，<code>netcat</code>就像<code>cat</code>一样，但是通过网络。起步：</p><p>1. 我将另一个端口，80，转发到我运行 Linux 的家用 PC，所以我能象这样连接它：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>(My home PC) --&gt; vm1:80
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br></div></div><p>2. 我将这个规则添加到<code>iptables</code>，来记录<code>iptables</code>内部的数据包发生了什么。</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>sudo iptables -t raw -A PREROUTING -p tcp -m tcp --dport 80 -j TRACE
+sudo iptables -t raw -A INPUT -p tcp -m tcp --sport 80 -j TRACE
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><p>这是我的<code>vm1</code>上的<code>iptables</code>规则集：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>root@vm1:/home/user1# for i in raw mangle nat filter ; do echo -e &quot;\n-----&quot; TABLE: $i &#39;-----&#39; ; iptables -t $i -L ; done
+
+----- TABLE: raw -----
+Chain PREROUTING (policy ACCEPT)  target     prot opt source               destination
+                                  TRACE      tcp  --  anywhere             anywhere            tcp dpt:www
+Chain OUTPUT (policy ACCEPT)      target     prot opt source               destination
+                                  TRACE      tcp  --  anywhere             anywhere            tcp spt:www
+----- TABLE: mangle -----
+Chain PREROUTING (policy ACCEPT)  target     prot opt source               destination
+Chain INPUT (policy ACCEPT)       target     prot opt source               destination
+Chain FORWARD (policy ACCEPT)     target     prot opt source               destination
+Chain OUTPUT (policy ACCEPT)      target     prot opt source               destination
+Chain POSTROUTING (policy ACCEPT) target     prot opt source               destination
+ 
+----- TABLE: nat -----
+Chain PREROUTING (policy ACCEPT)  target     prot opt source               destination
+Chain POSTROUTING (policy ACCEPT) target     prot opt source               destination
+Chain OUTPUT (policy ACCEPT)      target     prot opt source               destination
+ 
+----- TABLE: filter -----
+Chain INPUT (policy ACCEPT)       target     prot opt source               destination
+Chain FORWARD (policy ACCEPT)     target     prot opt source               destination
+Chain OUTPUT (policy ACCEPT)      target     prot opt source               destination
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br></div></div><p>你可以看到，没有其它规则了。另一种查看<code>iptables</code>规则的方式，是使用<code>iptables-save</code>工具：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>root@vm1:/home/user1# iptables-save
+# Generated by iptables-save v1.4.8 on Fri Jul 13 08:09:04 2012
+#(1)
+*mangle
+#(2)        (3)     (4)   (5)
+:PREROUTING ACCEPT [15662:802240]
+:INPUT ACCEPT [15662:802240]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [12756:3671974]
+:POSTROUTING ACCEPT [12756:3671974]
+COMMIT
+# Completed on Fri Jul 13 08:09:04 2012
+# Generated by iptables-save v1.4.8 on Fri Jul 13 08:09:04 2012
+*nat
+:PREROUTING ACCEPT [18:792]
+:POSTROUTING ACCEPT [42:2660]
+:OUTPUT ACCEPT [42:2660]
+COMMIT
+# Completed on Fri Jul 13 08:09:04 2012
+# Generated by iptables-save v1.4.8 on Fri Jul 13 08:09:04 2012
+*raw
+:PREROUTING ACCEPT [15854:814892]
+:OUTPUT ACCEPT [12855:3682054]
+-A PREROUTING -p tcp -m tcp --dport 80 -j TRACE
+-A OUTPUT -p tcp -m tcp --sport 80 -j TRACE
+COMMIT
+# Completed on Fri Jul 13 08:09:04 2012
+# Generated by iptables-save v1.4.8 on Fri Jul 13 08:09:04 2012
+*filter
+:INPUT ACCEPT [35107:2459066]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [26433:10670628]
+COMMIT
+# Completed on Fri Jul 13 08:09:04 2012
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br></div></div><p><code> iptables-save</code>字段如下所示：</p><table><thead><tr><th>字段</th><th>描述</th></tr></thead><tbody><tr><td>(1)</td><td>表名称</td></tr><tr><td>(2)</td><td>链名称</td></tr><tr><td>(3)</td><td>链策略</td></tr><tr><td>(4)</td><td>封包计数</td></tr><tr><td>(5)</td><td>字节计数</td></tr></tbody></table><p>3. 我启动<code>nc</code>来监听端口 80：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>nc -l 80
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br></div></div><p>4. 我向<code>vm1</code>发送字符串：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>echo &#39;Hello, world!&#39; | nc localhost 80
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br></div></div><p>下面的是我的家用 PC 和<code>vm1</code>之间的交换：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>08:00:05.655339 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [S], seq 4164179969, win 65535, options [mss 1460], length 0
+08:00:05.655653 IP 10.0.2.15.80 &gt; 10.0.2.2.51534: Flags [S.], seq 4149908960, ack 4164179970, win 5840, options [mss 1460], length 0
+08:00:05.655773 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [.], ack 1, win 65535, length 0
+08:00:05.655868 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [P.], seq 1:15, ack 1, win 65535, length 14
+08:00:05.655978 IP 10.0.2.15.80 &gt; 10.0.2.2.51534: Flags [.], ack 15, win 5840, length 0
+08:00:10.037978 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [F.], seq 15, ack 1, win 65535, length 0
+08:00:10.038287 IP 10.0.2.15.80 &gt; 10.0.2.2.51534: Flags [F.], seq 1, ack 16, win 5840, length 0
+08:00:10.038993 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [.], ack 2, win 65535, length 0
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br></div></div><p>让我们回忆，数据如何交换。为此，让我们拆开第一个封包。</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>#                  (13)     (15)    (14)      (16)      (20)     (17)            (25)            
+08:00:05.655339 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [S], seq 4164179969, win 65535, 
+#        (8)        (9)
+options [mss 1460], length 0
+#                (1)  (2)  (3)  (4)                 (5)    
+#                ____ ____ ____ ___________________ ____
+        0x0000:  0000 0001 0006 5254 0012 3502 0000 0800  ......RT..5.....
+#                (6)  (7)  (8)  (9)(10,11)(12)  (13)
+#                ____ ____ ____ ____ /\/\ ____ _________  
+        0x0010:  4500 002c a006 0000 4006 c2b5 0a00 0202  E..,....@.......
+#                (14)      (15) (16) (17)      (18)
+#                _________ ____ ____ _________ __________ 
+        0x0020:  0a00 020f c94e 0050 f834 5801 0000 0000  .....N.P.4X.....
+#              (19,20)(21) (22) (23) (24) (25)
+#                /\/\ ____ ____ ____ ____ ____ 
+        0x0030:  6002 ffff 6641 0000 0204 05b4 0000       `...fA........
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br></div></div><p>我们封包中的字段和描述：</p><p>| DOD 模型层 | OSI 模型层 | 位于 | 字段 | 描述 | | --- | --- | --- | --- | --- | --- | | 链路 | 物理/数据链路 | <code>LINUX_SLL</code> 头部 | (1) | 封包类型 | | | | | (2) | <code>ARPHRD_</code> 类型 | | | | | (3) | 链路层 (MAC) 地址长度 | | | | | (4) | 链路层 (MAC) 源地址 | | | | | (5) | 协议类型 (IP) | | 互联网 | 网络 | IPv4 头部 | (6) | 版本，互联网头部长度，差分服务代码点，显式拥塞通知. | | | | | (7) | 总长度 | | | | | (8) | 身份，主要用于源 IP 数据报的段的唯一性鉴定 | | | | | (9) | 标志，段的偏移 | | | | | (10) | 生存时间 (TTL) | | | | | (11) | 协议编号 | | | | | (12) | 头部校验和 | | | | | (13) | 源 IP 地址 | | | | | (14) | 目标 IP 地址 | | 传输 | 传输 | TCP 头部 | (15) | 源 TCP 端口 | | | | | (16) | 目标 TCP 端口 | | | | | (17) | TCP 初始序列号 | | | | | (18) | ACK 编号字段 (空的，由于它是第一个封包) | | | | | (19) | | | | | | (20) | SYN TCP 标志 | | | | | (21) | TCP 窗口大小 | | | | | (22) | TCP 校验和 | | | | | (23) | 紧急指针 | | | | | (24) | 可选字段的开始 | | | | | (25) | TCP 最大段大小 (最大传输单元 - 40 字节) |</p><p>让我们看看<code>iptables</code>中，这个封包发生了什么：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>#(1)(2)        (3)    (4)   (5)     (6)  (7) (8)               (9)               (10)  (11)         (12)
+raw:PREROUTING:policy:2     IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+#                           (13)   (14)     (15)      (16)   (17)     (18)      (19)      (20)
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+#                           (21)           (22)  (23)         (24)     (25)(26)   (27)
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+mangle:PREROUTING:policy:1  IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+nat:PREROUTING:policy:1     IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+mangle:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+filter:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br></div></div><p><code>iptables</code>日志的字段的描述：</p><table><thead><tr><th>字段</th><th>描述</th></tr></thead><tbody><tr><td>(1)</td><td>表名称</td></tr><tr><td>(2)</td><td>链名称</td></tr><tr><td>(3)</td><td>类型 (用于内建链的策略)</td></tr><tr><td>(4)</td><td>规则编号</td></tr><tr><td>(5)</td><td>输入接口</td></tr><tr><td>(6)</td><td>输出接口 (空的，因为封包的目标是 vm1 自身)</td></tr><tr><td>(7)</td><td>MAC 地址</td></tr><tr><td>(8)</td><td>目标 (vm1) MAC</td></tr><tr><td>(9)</td><td>源 MAC</td></tr><tr><td>(10)</td><td>协议类型：IP</td></tr><tr><td>(11)</td><td>源 IP 地址</td></tr><tr><td>(12)</td><td>目标 IP 地址</td></tr><tr><td>(13)</td><td>IP 封包长度，以字节为单位 (不包括链路层头部)</td></tr><tr><td>(14)</td><td>IP 服务类型</td></tr><tr><td>(15)</td><td>IP 优先级</td></tr><tr><td>(16)</td><td>IP 生存时间</td></tr><tr><td>(17)</td><td>IP 封包 ID</td></tr><tr><td>(18)</td><td>协议类型：TCP</td></tr><tr><td>(19)</td><td>TCP 源端口</td></tr><tr><td>(20)</td><td>TCP 目标端口</td></tr><tr><td>(21)</td><td>TCP 序列号</td></tr><tr><td>(22)</td><td>TCP 应答编号</td></tr><tr><td>(23)</td><td>TCP 窗口大小</td></tr><tr><td>(24)</td><td>TCP 保留位</td></tr><tr><td>(25)</td><td>TCP SYN 标志已设置</td></tr><tr><td>(25)</td><td>TCP 紧急指针未设置</td></tr><tr><td>(25)</td><td>TCP 选项</td></tr></tbody></table><p>现在我将使用<code>tcpdump</code>输出和<code>iptables</code>日志，并排（更多的是逐段）向你显示这个交换。你的任务是逐行浏览这个交换，了解会发生什么。我建议你打印这个交换，并使用笔和纸进行处理它，你可以从<a href="http://nixsrv.com/llthw/ex26/log" target="_blank" rel="noopener noreferrer">特殊页面<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>打印它。你需要回答的问题是：</p><ul><li>每个字段的意思是什么？拿着铅笔，将字段从<code>tcpdump</code>的踪迹连接到原始数据包的十六进制数据，再到<code>iptables</code>日志。</li><li>数据包以什么顺序进行处理？首先是哪个表，最后是哪个，为什么？</li><li>为什么只有第一个数据包通过<code>nat</code>表进行处理？</li></ul><p>这是输出，看看：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>08:00:05.655339 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [S], seq 4164179969, win 65535, options [mss 1460], length 0
+        0x0000:  0000 0001 0006 5254 0012 3502 0000 0800  ......RT..5.....
+        0x0010:  4500 002c a006 0000 4006 c2b5 0a00 0202  E..,....@.......
+        0x0020:  0a00 020f c94e 0050 f834 5801 0000 0000  .....N.P.4X.....
+        0x0030:  6002 ffff 6641 0000 0204 05b4 0000       `...fA........
+`
+raw:PREROUTING:policy:2     IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+mangle:PREROUTING:policy:1  IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+nat:PREROUTING:policy:1     IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+mangle:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+filter:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=40966 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179969 ACK=0 WINDOW=65535 RES=0x00 SYN URGP=0 OPT (020405B4)
+ 
+08:00:05.655653 IP 10.0.2.15.80 &gt; 10.0.2.2.51534: Flags [S.], seq 4149908960, ack 4164179970, win 5840, options [mss 1460], length 0
+        0x0000:  0004 0001 0006 0800 27d4 4568 0000 0800  ........&#39;.Eh....
+        0x0010:  4500 002c 0000 4000 4006 22bc 0a00 020f  E..,..@.@.&quot;.....
+        0x0020:  0a00 0202 0050 c94e f75a 95e0 f834 5802  .....P.N.Z...4X.
+        0x0030:  6012 16d0 c224 0000 0204 05b4            `....$......
+&#39;
+raw:OUTPUT:policy:2         IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=0 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908960 ACK=4164179970 WINDOW=5840 RES=0x00 ACK SYN URGP=0 OPT (020405B4) UID=0 GID=0
+mangle:OUTPUT:policy:1      IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=0 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908960 ACK=4164179970 WINDOW=5840 RES=0x00 ACK SYN URGP=0 OPT (020405B4) UID=0 GID=0
+filter:OUTPUT:policy:1      IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=0 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908960 ACK=4164179970 WINDOW=5840 RES=0x00 ACK SYN URGP=0 OPT (020405B4) UID=0 GID=0
+mangle:POSTROUTING:policy:1 IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=44 TOS=0x00 PREC=0x00 TTL=64 ID=0 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908960 ACK=4164179970 WINDOW=5840 RES=0x00 ACK SYN URGP=0 OPT (020405B4) UID=0 GID=0
+ 
+08:00:05.655773 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [.], ack 1, win 65535, length 0
+        0x0000:  0000 0001 0006 5254 0012 3502 0000 0800  ......RT..5.....
+        0x0010:  4500 0028 a007 0000 4006 c2b8 0a00 0202  E..(....@.......
+        0x0020:  0a00 020f c94e 0050 f834 5802 f75a 95e1  .....N.P.4X..Z..
+        0x0030:  5010 ffff f0b1 0000 0000 0000 0000       P.............
+ 
+raw:PREROUTING:policy:2     IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40967 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179970 ACK=4149908961 WINDOW=65535 RES=0x00 ACK URGP=0
+mangle:PREROUTING:policy:1  IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40967 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179970 ACK=4149908961 WINDOW=65535 RES=0x00 ACK URGP=0
+mangle:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40967 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179970 ACK=4149908961 WINDOW=65535 RES=0x00 ACK URGP=0
+filter:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40967 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179970 ACK=4149908961 WINDOW=65535 RES=0x00 ACK URGP=0
+ 
+08:00:05.655868 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [P.], seq 1:15, ack 1, win 65535, length 14
+        0x0000:  0000 0001 0006 5254 0012 3502 0000 0800  ......RT..5.....
+        0x0010:  4500 0036 a008 0000 4006 c2a9 0a00 0202  E..6....@.......
+        0x0020:  0a00 020f c94e 0050 f834 5802 f75a 95e1  .....N.P.4X..Z..
+        0x0030:  5018 ffff af45 0000 4865 6c6c 6f2c 2077  P....E..Hello,.w
+        0x0040:  6f72 6c64 210a                           orld!.
+ 
+raw:PREROUTING:policy:2     IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=54 TOS=0x00 PREC=0x00 TTL=64 ID=40968 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179970 ACK=4149908961 WINDOW=65535 RES=0x00 ACK PSH URGP=0
+mangle:PREROUTING:policy:1  IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=54 TOS=0x00 PREC=0x00 TTL=64 ID=40968 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179970 ACK=4149908961 WINDOW=65535 RES=0x00 ACK PSH URGP=0
+mangle:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=54 TOS=0x00 PREC=0x00 TTL=64 ID=40968 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179970 ACK=4149908961 WINDOW=65535 RES=0x00 ACK PSH URGP=0
+filter:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=54 TOS=0x00 PREC=0x00 TTL=64 ID=40968 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179970 ACK=4149908961 WINDOW=65535 RES=0x00 ACK PSH URGP=0
+ 
+08:00:05.655978 IP 10.0.2.15.80 &gt; 10.0.2.2.51534: Flags [.], ack 15, win 5840, length 0
+        0x0000:  0004 0001 0006 0800 27d4 4568 0000 0800  ........&#39;.Eh....
+        0x0010:  4500 0028 377c 4000 4006 eb43 0a00 020f  E..(7|@.@..C....
+        0x0020:  0a00 0202 0050 c94e f75a 95e1 f834 5810  .....P.N.Z...4X.
+        0x0030:  5010 16d0 d9d3 0000                      P.......
+&#39;
+raw:OUTPUT:policy:2         IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=14204 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908961 ACK=4164179984 WINDOW=5840 RES=0x00 ACK URGP=0
+mangle:OUTPUT:policy:1      IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=14204 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908961 ACK=4164179984 WINDOW=5840 RES=0x00 ACK URGP=0
+filter:OUTPUT:policy:1      IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=14204 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908961 ACK=4164179984 WINDOW=5840 RES=0x00 ACK URGP=0
+mangle:POSTROUTING:policy:1 IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=14204 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908961 ACK=4164179984 WINDOW=5840 RES=0x00 ACK URGP=0
+ 
+08:00:10.037978 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [F.], seq 15, ack 1, win 65535, length 0
+        0x0000:  0000 0001 0006 5254 0012 3502 0000 0800  ......RT..5.....
+        0x0010:  4500 0028 a00e 0000 4006 c2b1 0a00 0202  E..(....@.......
+        0x0020:  0a00 020f c94e 0050 f834 5810 f75a 95e1  .....N.P.4X..Z..
+        0x0030:  5011 ffff f0a2 0000 0000 0000 0000       P.............
+ 
+raw:PREROUTING:policy:2     IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40974 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179984 ACK=4149908961 WINDOW=65535 RES=0x00 ACK FIN URGP=0
+mangle:PREROUTING:policy:1  IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40974 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179984 ACK=4149908961 WINDOW=65535 RES=0x00 ACK FIN URGP=0
+mangle:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40974 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179984 ACK=4149908961 WINDOW=65535 RES=0x00 ACK FIN URGP=0
+filter:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40974 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179984 ACK=4149908961 WINDOW=65535 RES=0x00 ACK FIN URGP=0
+ 
+08:00:10.038287 IP 10.0.2.15.80 &gt; 10.0.2.2.51534: Flags [F.], seq 1, ack 16, win 5840, length 0
+        0x0000:  0004 0001 0006 0800 27d4 4568 0000 0800  ........&#39;.Eh....
+        0x0010:  4500 0028 377d 4000 4006 eb42 0a00 020f  E..(7}@.@..B....
+        0x0020:  0a00 0202 0050 c94e f75a 95e1 f834 5811  .....P.N.Z...4X.
+        0x0030:  5011 16d0 d9d1 0000                      P.......
+&#39;
+raw:OUTPUT:policy:2         IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=14205 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908961 ACK=4164179985 WINDOW=5840 RES=0x00 ACK FIN URGP=0 UID=0 GID=0
+mangle:OUTPUT:policy:1      IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=14205 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908961 ACK=4164179985 WINDOW=5840 RES=0x00 ACK FIN URGP=0 UID=0 GID=0
+filter:OUTPUT:policy:1      IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=14205 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908961 ACK=4164179985 WINDOW=5840 RES=0x00 ACK FIN URGP=0 UID=0 GID=0
+mangle:POSTROUTING:policy:1 IN= OUT=eth0 SRC=10.0.2.15 DST=10.0.2.2
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=14205 DF PROTO=TCP SPT=80 DPT=51534
+                            SEQ=4149908961 ACK=4164179985 WINDOW=5840 RES=0x00 ACK FIN URGP=0 UID=0 GID=0
+ 
+08:00:10.038993 IP 10.0.2.2.51534 &gt; 10.0.2.15.80: Flags [.], ack 2, win 65535, length 0
+        0x0000:  0000 0001 0006 5254 0012 3502 0000 0800  ......RT..5.....
+        0x0010:  4500 0028 a00f 0000 4006 c2b0 0a00 0202  E..(....@.......
+        0x0020:  0a00 020f c94e 0050 f834 5811 f75a 95e2  .....N.P.4X..Z..
+        0x0030:  5010 ffff f0a1 0000 0000 0000 0000       P.............
+ 
+raw:PREROUTING:policy:2     IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40975 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179985 ACK=4149908962 WINDOW=65535 RES=0x00 ACK URGP=0
+mangle:PREROUTING:policy:1  IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40975 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179985 ACK=4149908962 WINDOW=65535 RES=0x00 ACK URGP=0
+mangle:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40975 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179985 ACK=4149908962 WINDOW=65535 RES=0x00 ACK URGP=0
+filter:INPUT:policy:1       IN=eth0 OUT= MAC=08:00:27:d4:45:68:52:54:00:12:35:02:08:00 SRC=10.0.2.2 DST=10.0.2.15
+                            LEN=40 TOS=0x00 PREC=0x00 TTL=64 ID=40975 PROTO=TCP SPT=51534 DPT=80
+                            SEQ=4164179985 ACK=4149908962 WINDOW=65535 RES=0x00 ACK URGP=0
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br><span class="line-number">147</span><br><span class="line-number">148</span><br><span class="line-number">149</span><br><span class="line-number">150</span><br><span class="line-number">151</span><br><span class="line-number">152</span><br><span class="line-number">153</span><br><span class="line-number">154</span><br><span class="line-number">155</span><br></div></div><h2 id="这样做" tabindex="-1"><a class="header-anchor" href="#这样做" aria-hidden="true">#</a> 这样做</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code> 1: sudo iptables-save
+ 2: sudo iptables -t filter -A INPUT -i lo -j ACCEPT
+ 3: sudo iptables -t filter -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+ 4: sudo iptables -t filter -P INPUT DROP
+ 5: sudo iptables -nt filter -L --line-numbers
+ 6: ping -c 2 -W 1 10.0.2.2
+ 7: sudo iptables -t filter -A INPUT --match state --state ESTABLISHED -j ACCEPT
+ 8: sudo iptables -nt filter -L --line-numbers
+ 9: ping -c 2 -W 1 10.0.2.2
+10: sudo modprobe ipt_LOG
+11: sudo iptables -nt raw -L --line-numbers
+12: sudo iptables -t raw -A PREROUTING -p udp -m udp --dport 1024 -j TRACE
+13: sudo iptables -t raw -A OUTPUT -p udp -m udp --sport 1024 -j TRACE
+14: sudo tail -n0 -f /var/log/kern.log | cut -c52-300 &amp;
+15: nc -ulp 1024 &amp;
+16: echo &#39;Hello there!&#39; | nc -u localhost 1000
+17: &lt;CTRL+C&gt;
+18: fg
+19: &lt;CTRL+C&gt;
+20: fg
+21: &lt;CTRL+C&gt;
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br></div></div><h2 id="你会看到什么" tabindex="-1"><a class="header-anchor" href="#你会看到什么" aria-hidden="true">#</a> 你会看到什么</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ sudo iptables-save
+# Generated by iptables-save v1.4.8 on Mon Jul 16 09:01:32 2012
+*mangle
+:PREROUTING ACCEPT [45783:3411367]
+:INPUT ACCEPT [45783:3411367]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [30409:9552110]
+:POSTROUTING ACCEPT [30331:9543294]
+COMMIT
+# Completed on Mon Jul 16 09:01:32 2012
+# Generated by iptables-save v1.4.8 on Mon Jul 16 09:01:32 2012
+*nat
+:PREROUTING ACCEPT [24:1056]
+:POSTROUTING ACCEPT [755:41247]
+:OUTPUT ACCEPT [817:45207]
+COMMIT
+# Completed on Mon Jul 16 09:01:32 2012
+# Generated by iptables-save v1.4.8 on Mon Jul 16 09:01:32 2012
+*raw
+:PREROUTING ACCEPT [3171:197900]
+:OUTPUT ACCEPT [1991:1294054]
+-A PREROUTING -p udp -m udp --dport 80 -j TRACE
+-A OUTPUT -p udp -m udp --sport 80 -j TRACE
+COMMIT
+# Completed on Mon Jul 16 09:01:32 2012
+# Generated by iptables-save v1.4.8 on Mon Jul 16 09:01:32 2012
+*filter
+:INPUT ACCEPT [54:3564]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [28:2540]
+COMMIT
+# Completed on Mon Jul 16 09:01:32 2012
+user1@vm1:~$ sudo iptables -t filter -A INPUT -i lo -j ACCEPT
+user1@vm1:~$ sudo iptables -t filter -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+user1@vm1:~$ sudo iptables -t filter -P INPUT DROP
+user1@vm1:~$ sudo iptables -nt filter -L --line-numbers
+Chain INPUT (policy DROP)
+num  target     prot opt source               destination
+1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0
+2    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           tcp dpt:22
+ 
+Chain FORWARD (policy ACCEPT)
+num  target     prot opt source               destination
+ 
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination
+ 
+user1@vm1:~$ ping -c 2 -W 1 10.0.2.2
+PING 10.0.2.2 (10.0.2.2) 56(84) bytes of data.
+ 
+--- 10.0.2.2 ping statistics ---
+2 packets transmitted, 0 received, 100% packet loss, time 1008ms
+ 
+user1@vm1:~$ sudo iptables -t filter -A INPUT --match state --state ESTABLISHED -j ACCEPT
+user1@vm1:~$ sudo iptables -nt filter -L --line-numbers
+Chain INPUT (policy DROP)
+num  target     prot opt source               destination
+1    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0
+2    ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0           tcp dpt:22
+3    ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0           state ESTABLISHED
+ 
+Chain FORWARD (policy ACCEPT)
+num  target     prot opt source               destination
+ 
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination
+ 
+user1@vm1:~$ ping -c 2 -W 1 10.0.2.2
+PING 10.0.2.2 (10.0.2.2) 56(84) bytes of data.
+64 bytes from 10.0.2.2: icmp_req=1 ttl=63 time=0.385 ms
+64 bytes from 10.0.2.2: icmp_req=2 ttl=63 time=0.142 ms
+ 
+--- 10.0.2.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.142/0.263/0.385/0.122 ms
+user1@vm1:~$ sudo iptables -nt raw -L --line-numbers
+Chain PREROUTING (policy ACCEPT)
+num  target     prot opt source               destination
+ 
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination
+user1@vm1:~$ sudo iptables -t raw -A PREROUTING -p udp -m udp --dport 1024 -j TRACE
+user1@vm1:~$ sudo iptables -t raw -A OUTPUT -p udp -m udp --sport 1024 -j TRACE
+user1@vm1:~$ sudo iptables -nt raw -L --line-numbers
+Chain PREROUTING (policy ACCEPT)
+num  target     prot opt source               destination
+1    TRACE      udp  --  0.0.0.0/0            0.0.0.0/0           udp dpt:1024
+ 
+Chain OUTPUT (policy ACCEPT)
+num  target     prot opt source               destination
+1    TRACE      udp  --  0.0.0.0/0            0.0.0.0/0           udp spt:1024
+user1@vm1:~$ sudo tail -n0 -f /var/log/kern.log | cut -c52-300 &amp;
+[1] 10249
+user1@vm1:~$ nc -ulp 1024 &amp;
+[2] 10251
+user1@vm1:~$ echo &#39;Hello there!&#39; | nc -u localhost 1024
+Hello there!
+raw:PREROUTING:policy:2 IN=lo OUT= MAC=00:00:00:00:00:00:00:00:00:00:00:00:08:00 SRC=127.0.0.1 DST=127.0.0.1 LEN=41 TOS=0x00 PREC=0x00 TTL=64 ID=57898 DF PROTO=UDP SPT=50407 DPT=1024 LEN=21
+mangle:PREROUTING:policy:1 IN=lo OUT= MAC=00:00:00:00:00:00:00:00:00:00:00:00:08:00 SRC=127.0.0.1 DST=127.0.0.1 LEN=41 TOS=0x00 PREC=0x00 TTL=64 ID=57898 DF PROTO=UDP SPT=50407 DPT=1024 LEN=21
+mangle:INPUT:policy:1 IN=lo OUT= MAC=00:00:00:00:00:00:00:00:00:00:00:00:08:00 SRC=127.0.0.1 DST=127.0.0.1 LEN=41 TOS=0x00 PREC=0x00 TTL=64 ID=57898 DF PROTO=UDP SPT=50407 DPT=1024 LEN=21
+filter:INPUT:rule:1 IN=lo OUT= MAC=00:00:00:00:00:00:00:00:00:00:00:00:08:00 SRC=127.0.0.1 DST=127.0.0.1 LEN=41 TOS=0x00 PREC=0x00 TTL=64 ID=57898 DF PROTO=UDP SPT=50407 DPT=1024 LEN=21
+ 
+^C
+[2]+  Stopped                 nc -ulp 1024
+user1@vm1:~$ fg
+nc -ulp 1024
+^C
+user1@vm1:~$ fg
+sudo tail -n0 -f /var/log/kern.log | cut -c52-300
+^C
+user1@vm1:~$
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br></div></div><h2 id="解释" tabindex="-1"><a class="header-anchor" href="#解释" aria-hidden="true">#</a> 解释</h2><ol><li>列出所有表中的所有<code>iptables</code>规则。你看不到任何东西。</li><li>允许<code>lo</code>（<a href="http://en.wikipedia.org/wiki/Localhost" target="_blank" rel="noopener noreferrer">环回<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>）接口上的所有传入流量。</li><li>允许 TCP 端口 22 上的所有传入流量，这是<code>ssh</code>。</li><li>将默认<code>INPUT</code>策略更改为<code>DROP</code>，禁止所有传入连接，除了 TCP 端口 22。如果在此丢失<code>vm1</code>的连接，则表示你做错了，在 VirtualBox 中重新启动并重试。</li><li>列出当前的过滤器规则。注意：你可以按号码删除规则，如下所示：<code>sudo iptables -t filter -D INPUT 2</code>。请注意策略与规则完全不一样。</li><li>尝试<code>ping</code>你的默认网关，失败了。为什么是这样，即使允许传出连接（<code>Chain OUTPUT (policy ACCEPT)</code>）？传出的数据包被发送到网关，但是网关的回复不能进入。</li><li>添加一条规则，告诉<code>iptables</code>允许属于已建立连接的所有数据包，例如来自<code>vm1</code>的所有连接。</li><li>列出当前的过滤器规则。你可以看到我们的新规则。</li><li><code>ping</code> <code>vm1</code>的默认网关，这次成功了。</li><li>加载 Linux 内核模块，它允许使用包过滤日志功能。</li><li>添加规则，来记录所有发往<code>vm1</code>任何接口的 UDP 端口 1024 的传入数据包。</li><li>添加规则，来记录所有来自<code>vm1</code>任何接口的 UDP 端口 1024 的传出数据包。</li><li>列出<code>raw</code>表规则。</li><li>在后台启动<code>tail</code>，将打印写入<code>/var/log/kern.log</code>的所有新行。<code>cut</code>会在开头删除不必要的日志条目前缀。请注意后台进程如何写入终端。</li><li>以服务器模式启动<code>nc</code>，在<code>vm1</code>的所有接口上监听 UDP 端口 1024 。</li><li>以客户端模式启动<code>nc</code>，将字符串<code>Hello there!</code>发送到我们的服务器模式<code>nc</code>。<code>tail</code>打印出<code>kern.log</code>中的所有新行，你可以看到在 Linux 内核封包过滤器中，我们的单个 UDP 数据包从一个表到了另一个表。没有回复，所以只有一个数据包被发送和处理。</li><li>杀死客户端模式<code>nc</code>。</li><li>将服务器模式<code>nc</code>带到前台。</li><li>杀死服务器模式<code>nc</code>。</li><li>将<code>sudo tail -n0 -f /var/log/kern.log | cut -c52-300 &amp;</code>带到前台。</li><li>杀死它。</li></ol><h2 id="附加题" tabindex="-1"><a class="header-anchor" href="#附加题" aria-hidden="true">#</a> 附加题</h2><p>这个练习本身已经很大了。只需要打印出日志，并使用铅笔浏览它，直到理解了每一行的每个字段都发生了什么。如果你卡住了，去问别人：<a href="http://nixsrv.com/llthw/ex26/log" target="_blank" rel="noopener noreferrer">http://nixsrv.com/llthw/ex26/log<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>。</p><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">上次更新: </span><!----></div><div class="meta-item contributors"><span class="meta-item-label">贡献者: </span><span class="meta-item-info"><!--[--><!--[--><span class="contributor" title="email: yzqdev@outlook.com">yzqdev</span><!----><!--]--><!--]--></span></div></footer><nav class="page-nav"><p class="inner"><span class="prev"><a href="/llthw-zh/ex25.html" class="" aria-label="练习 25：网络：配置文件，/etc/network/interfaces"><!--[--><!--]--> 练习 25：网络：配置文件，/etc/network/interfaces <!--[--><!--]--></a></span><span class="next"><a href="/llthw-zh/ex27.html" class="" aria-label="练习 27：安全 Shell，ssh，sshd，scp"><!--[--><!--]--> 练习 27：安全 Shell，ssh，sshd，scp <!--[--><!--]--></a></span></p></nav><!--[--><!--]--></main><!--]--></div><!----><!--]--></div>
+    <script type="module" src="/llthw-zh/assets/app.91d0dc40.js" defer></script>
+  </body>
+</html>

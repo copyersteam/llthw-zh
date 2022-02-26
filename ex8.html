@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="generator" content="VuePress 2.0.0-beta.35">
+    <style>
+      :root {
+        --c-bg: #fff;
+      }
+      html.dark {
+        --c-bg: #22272e;
+      }
+      html, body {
+        background-color: var(--c-bg);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem('vuepress-color-scheme');
+			const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (userMode === 'dark' || (userMode !== 'light' && systemDarkMode)) {
+				document.documentElement.classList.toggle('dark', true);
+			}
+    </script>
+    <title>练习 8：更多的重定向和过滤：head，tail，awk，grep，sed | VuePress</title><meta name="description" content="Vue 驱动的静态网站生成器">
+    <link rel="modulepreload" href="/llthw-zh/assets/app.91d0dc40.js"><link rel="modulepreload" href="/llthw-zh/assets/ex8.html.9dba0385.js"><link rel="modulepreload" href="/llthw-zh/assets/ex8.html.22ef24b3.js">
+    <link rel="stylesheet" href="/llthw-zh/assets/style.640a10cb.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><!--[--><header ref_key="navbar" class="navbar"><div class="toggle-sidebar-button" title="切换侧边栏" aria-expanded="false" role="button" tabindex="0"><div class="icon" aria-hidden="true"><span></span><span></span><span></span></div></div><span><a href="/llthw-zh/" class=""><!----><span class="site-name">VuePress</span></a></span><div class="navbar-items-wrapper" style=""><!--[--><!--]--><!----><!--[--><!--]--><button class="toggle-dark-button" title="切换夜间模式"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><form class="search-box" role="search"><input type="search" placeholder="搜索文档" autocomplete="off" spellcheck="false" value><!----></form></div></header><!--]--><div class="sidebar-mask"></div><!--[--><aside class="sidebar"><!----><!--[--><!--]--><ul class="sidebar-items"><!--[--><li><p tabindex="0" class="sidebar-item sidebar-heading active">教程 <!----></p><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a href="/llthw-zh/intro.html" class="sidebar-item" aria-label="引言"><!--[--><!--]--> 引言 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex0.html" class="sidebar-item" aria-label="练习 0：起步"><!--[--><!--]--> 练习 0：起步 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex1.html" class="sidebar-item" aria-label="练习 1：文本编辑器，vim"><!--[--><!--]--> 练习 1：文本编辑器，vim <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex2.html" class="sidebar-item" aria-label="练习 2：文本浏览器，少即是多"><!--[--><!--]--> 练习 2：文本浏览器，少即是多 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex3.html" class="sidebar-item" aria-label="练习 3：Bash：Shell、.profile、.bashrc、.bash_history。"><!--[--><!--]--> 练习 3：Bash：Shell、.profile、.bashrc、.bash_history。 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex4.html" class="sidebar-item" aria-label="练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch"><!--[--><!--]--> 练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex5.html" class="sidebar-item" aria-label="练习 5：Bash：环境变量，env，set，export"><!--[--><!--]--> 练习 5：Bash：环境变量，env，set，export <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex6.html" class="sidebar-item" aria-label="练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales"><!--[--><!--]--> 练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex7.html" class="sidebar-item" aria-label="练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv"><!--[--><!--]--> 练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex8.html" class="router-link-active router-link-exact-active router-link-active sidebar-item active" aria-label="练习 8：更多的重定向和过滤：head，tail，awk，grep，sed"><!--[--><!--]--> 练习 8：更多的重定向和过滤：head，tail，awk，grep，sed <!--[--><!--]--></a><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a aria-current="page" href="/llthw-zh/ex8.html#这样做" class="router-link-active router-link-exact-active sidebar-item" aria-label="这样做"><!--[--><!--]--> 这样做 <!--[--><!--]--></a><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a aria-current="page" href="/llthw-zh/ex8.html#你会看到什么" class="router-link-active router-link-exact-active sidebar-item" aria-label="你会看到什么"><!--[--><!--]--> 你会看到什么 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><li><a aria-current="page" href="/llthw-zh/ex8.html#解释" class="router-link-active router-link-exact-active sidebar-item" aria-label="解释"><!--[--><!--]--> 解释 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex8.html#附加题" class="router-link-active router-link-exact-active sidebar-item" aria-label="附加题"><!--[--><!--]--> 附加题 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><li><a href="/llthw-zh/ex9.html" class="sidebar-item" aria-label="练习 9：Bash：任务控制，jobs，fg"><!--[--><!--]--> 练习 9：Bash：任务控制，jobs，fg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex10.html" class="sidebar-item" aria-label="练习 10：Bash：程序退出代码（返回状态）"><!--[--><!--]--> 练习 10：Bash：程序退出代码（返回状态） <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex11.html" class="sidebar-item" aria-label="练习 11：总结"><!--[--><!--]--> 练习 11：总结 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex12.html" class="sidebar-item" aria-label="练习 12：文档：man，info"><!--[--><!--]--> 练习 12：文档：man，info <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex13.html" class="sidebar-item" aria-label="练习 13：文档：Google"><!--[--><!--]--> 练习 13：文档：Google <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex14.html" class="sidebar-item" aria-label="练习 14：包管理：Debian 包管理工具aptitude"><!--[--><!--]--> 练习 14：包管理：Debian 包管理工具aptitude <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex15.html" class="sidebar-item" aria-label="练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d"><!--[--><!--]--> 练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex16.html" class="sidebar-item" aria-label="练习 16：处理进程，ps，kill"><!--[--><!--]--> 练习 16：处理进程，ps，kill <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex17.html" class="sidebar-item" aria-label="练习 17：任务调度：cron，at"><!--[--><!--]--> 练习 17：任务调度：cron，at <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex18.html" class="sidebar-item" aria-label="练习 18：日志：/var/log，rsyslog，logger"><!--[--><!--]--> 练习 18：日志：/var/log，rsyslog，logger <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex19.html" class="sidebar-item" aria-label="练习 19：文件系统：挂载，mount，/etc/fstab"><!--[--><!--]--> 练习 19：文件系统：挂载，mount，/etc/fstab <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex20.html" class="sidebar-item" aria-label="练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs"><!--[--><!--]--> 练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex21.html" class="sidebar-item" aria-label="练习 21：文件系统：修改根目录，chroot"><!--[--><!--]--> 练习 21：文件系统：修改根目录，chroot <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex22.html" class="sidebar-item" aria-label="练习 22：文件系统：移动数据，tar，dd"><!--[--><!--]--> 练习 22：文件系统：移动数据，tar，dd <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex23.html" class="sidebar-item" aria-label="练习 23：文件系统：权限，chown，chmod，umask"><!--[--><!--]--> 练习 23：文件系统：权限，chown，chmod，umask <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex24.html" class="sidebar-item" aria-label="练习 24：接口配置，ifconfig，netstat，iproute2，ss，route"><!--[--><!--]--> 练习 24：接口配置，ifconfig，netstat，iproute2，ss，route <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex25.html" class="sidebar-item" aria-label="练习 25：网络：配置文件，/etc/network/interfaces"><!--[--><!--]--> 练习 25：网络：配置文件，/etc/network/interfaces <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex26.html" class="sidebar-item" aria-label="练习 26：网络：封包过滤配置，iptables"><!--[--><!--]--> 练习 26：网络：封包过滤配置，iptables <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex27.html" class="sidebar-item" aria-label="练习 27：安全 Shell，ssh，sshd，scp"><!--[--><!--]--> 练习 27：安全 Shell，ssh，sshd，scp <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex28.html" class="sidebar-item" aria-label="练习 28：性能：获取性能情况，uptime，free，top"><!--[--><!--]--> 练习 28：性能：获取性能情况，uptime，free，top <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex29.html" class="sidebar-item" aria-label="练习 29：内核：内核消息，dmesg"><!--[--><!--]--> 练习 29：内核：内核消息，dmesg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex30.html" class="sidebar-item" aria-label="练习 30：打磨、洗练、重复：总复习"><!--[--><!--]--> 练习 30：打磨、洗练、重复：总复习 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/next.html" class="sidebar-item" aria-label="下一步做什么"><!--[--><!--]--> 下一步做什么 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/mdi.html" class="sidebar-item" aria-label="Debian 手动安装"><!--[--><!--]--> Debian 手动安装 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><!--]--></ul><!--[--><!--]--></aside><!--]--><!--[--><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><h1 id="练习-8-更多的重定向和过滤-head-tail-awk-grep-sed" tabindex="-1"><a class="header-anchor" href="#练习-8-更多的重定向和过滤-head-tail-awk-grep-sed" aria-hidden="true">#</a> 练习 8：更多的重定向和过滤：<code>head</code>，<code>tail</code>，<code>awk</code>，<code>grep</code>，<code>sed</code></h1><blockquote><p>原文：<a href="https://archive.fo/JH46V" target="_blank" rel="noopener noreferrer">Exercise 8. Bash: more on redirection and filtering: head, tail, awk, grep, sed<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>译者：<a href="https://github.com/wizardforcel" target="_blank" rel="noopener noreferrer">飞龙<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>协议：<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>自豪地采用<a href="https://translate.google.cn/" target="_blank" rel="noopener noreferrer">谷歌翻译<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><p>现在你试过了 Linux，我会介绍一下 Unix 的方式。注意看。</p><blockquote><p>这就是 Unix 的哲学：写一些程序，只做一件事，并且把它做好。编写程序，使其一起工作。编写程序来处理文本流，因为这是一个通用接口。</p></blockquote><p>实际上这意味着为了熟练使用 Linux，你需要知道如何从一个程序中获取输出，并将其提供给另一个程序，通常会在此过程中修改它。通常，你可以通过使用管道，将多个程序合并在一起，它允许将一个程序的输出连接到另一个程序。像这样：</p><p><img src="/llthw-zh/assets/8-1.fa733d08.png" alt=""></p><p>这里发生的事情真的很简单。几乎每个 Linux 程序在启动时打开这三个文件：</p><p><code>stdin</code> - 标准输入。这是程序读取东西的地方。 <code>stdout</code> - 标准输出。这是程序写出东西的地方。 <code>stderr</code> - 标准错误。这是程序报错的地方。</p><p>这就是它的读取方式：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>启动程序 1 
+    开始从键盘读取数据
+    开始向显示器写出错误
+    启动程序 2 
+        开始从程序 1 读取输入
+        开始向显示器写出错误
+        启动程序 3 
+            开始从程序 2 读取输入
+            开始向显示器写出错误
+            开始向显示器写出数据
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br></div></div><p>还有另一种方式来描绘发生的事情，如果你喜欢 South Park 风格的幽默，但要小心：看到的是不会是不可见的！<a href="http://osxdaily.com/wp-content/uploads/2011/04/south-park-human-centipad.jpg" target="_blank" rel="noopener noreferrer">警告！你无法忽略它<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>。</p><p>让我们考虑以下管道，它接受<code>ls -al</code>的输出，仅打印文件名和文件修改时间：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>ls -al | tr -s &#39; &#39; | cut -d &#39; &#39; -f 8,9
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br></div></div><p>这是所发生事情的概述：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>启动 ls -al
+    获取当前目录中的文件列表
+    向显示器写出错误
+    向管道写出输出
+    启动 tr -s &#39; &#39;
+        通过管道从 ls -al 读取输入
+        两个字段之间只保留一个空格
+        向显示器写出错误
+        向管道写出输出
+        启动 cut -d &#39; &#39; -f 8,9
+            通过管道从 tr -s &#39; &#39; 读取输入
+            只保留字段 8 和 9，扔掉其它东西
+            向显示器写出错误
+            向显示器写出输出
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br></div></div><p>更详细地说，这是每一步发生的事情：</p><p>第一步：<code>ls -al</code>，我们获取了目录列表，每一列都叫做字段。</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ ls -al
+total 52
+drwxr-xr-x 2 user1 user1 4096 Jun 18 14:16 .
+drwxr-xr-x 3 root  root  4096 Jun  6 21:49 ..
+-rw------- 1 user1 user1 4865 Jun 15 19:34 .bash_history
+-rw-r--r-- 1 user1 user1  220 Jun  6 21:48 .bash_logout
+-rw-r--r-- 1 user1 user1 3184 Jun 14 12:24 .bashrc
+-rw-r--r-- 1 user1 user1   64 Jun 18 14:16 hello.txt
+-rw------- 1 user1 user1   89 Jun 18 16:26 .lesshst
+-rw-r--r-- 1 user1 user1  634 Jun 15 20:03 ls.out
+-rw-r--r-- 1 user1 user1  697 Jun  7 12:25 .profile
+-rw-r--r-- 1 user1 user1  741 Jun  7 12:19 .profile.bak
+-rw-r--r-- 1 user1 user1  741 Jun  7 13:12 .profile.bak1
+-rw------- 1 user1 user1  666 Jun 18 14:16 .viminfo
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br></div></div><p>第二步：<code>ls -al | tr -s &#39; &#39;</code>，我们在两个字段之间只保留，因为<code>cut</code>不能将多个空格理解为一种方式，来分离多个字段。</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ ls -al | tr -s &#39; &#39;
+total 52
+drwxr-xr-x 2 user1 user1 4096 Jun 18 14:16 .
+drwxr-xr-x 3 root root 4096 Jun 6 21:49 ..
+-rw------- 1 user1 user1 4865 Jun 15 19:34 .bash_history
+-rw-r--r-- 1 user1 user1 220 Jun 6 21:48 .bash_logout
+-rw-r--r-- 1 user1 user1 3184 Jun 14 12:24 .bashrc
+-rw-r--r-- 1 user1 user1 64 Jun 18 14:16 hello.txt
+-rw------- 1 user1 user1 89 Jun 18 16:26 .lesshst
+-rw-r--r-- 1 user1 user1 634 Jun 15 20:03 ls.out
+-rw-r--r-- 1 user1 user1 697 Jun 7 12:25 .profile
+-rw-r--r-- 1 user1 user1 741 Jun 7 12:19 .profile.bak
+-rw-r--r-- 1 user1 user1 741 Jun 7 13:12 .profile.bak1
+-rw------- 1 user1 user1 666 Jun 18 14:16 .viminfo
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br></div></div><p>第三步：我们只保留字段 8 和 9，它们是我们想要的。</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ ls -al | tr -s &#39; &#39; | cut -d &#39; &#39; -f 8,9
+ 
+14:16 .
+21:49 ..
+19:34 .bash_history
+21:48 .bash_logout
+12:24 .bashrc
+14:16 hello.txt
+16:26 .lesshst
+20:03 ls.out
+12:25 .profile
+12:19 .profile.bak
+13:12 .profile.bak1
+14:16 .viminfo
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br></div></div><p>现在你学到了，如何从一个程序获取输入，并将其传给另一个程序，并且如何转换它。</p><h2 id="这样做" tabindex="-1"><a class="header-anchor" href="#这样做" aria-hidden="true">#</a> 这样做</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code> 1: ls -al | head -n 5
+ 2: ls -al | tail -n 5
+ 3: ls -al | awk &#39;{print $8, $9}&#39;
+ 4: ls -al | awk &#39;{print $9, $8}&#39;
+ 5: ls -al | awk &#39;{printf &quot;%-20.20s %s\n&quot;,$9, $8}&#39;
+ 6: ls -al | grep bash
+ 7: ls -al &gt; ls.out
+ 8: cat ls.out
+ 9: cat ls.out | sed  &#39;s/bash/I replace this!!!/g&#39;
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br></div></div><h3 id="你会看到什么" tabindex="-1"><a class="header-anchor" href="#你会看到什么" aria-hidden="true">#</a> 你会看到什么</h3><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ ls -al | head -n 5
+total 52
+drwxr-xr-x 2 user1 user1 4096 Jun 18 14:16 .
+drwxr-xr-x 3 root  root  4096 Jun  6 21:49 ..
+-rw------- 1 user1 user1 4865 Jun 15 19:34 .bash_history
+-rw-r--r-- 1 user1 user1  220 Jun  6 21:48 .bash_logout
+user1@vm1:~$ ls -al | tail -n 5
+-rw-r--r-- 1 user1 user1  636 Jun 18 17:52 ls.out
+-rw-r--r-- 1 user1 user1  697 Jun  7 12:25 .profile
+-rw-r--r-- 1 user1 user1  741 Jun  7 12:19 .profile.bak
+-rw-r--r-- 1 user1 user1  741 Jun  7 13:12 .profile.bak1
+-rw------- 1 user1 user1  666 Jun 18 14:16 .viminfo
+user1@vm1:~$ ls -al | awk &#39;{print $8, $9}&#39;
+ 
+14:16 .
+21:49 ..
+19:34 .bash_history
+21:48 .bash_logout
+12:24 .bashrc
+14:16 hello.txt
+16:26 .lesshst
+17:52 ls.out
+12:25 .profile
+12:19 .profile.bak
+13:12 .profile.bak1
+14:16 .viminfo
+user1@vm1:~$ ls -al | awk &#39;{print $9, $8}&#39;
+ 
+. 14:16
+.. 21:49
+.bash_history 19:34
+.bash_logout 21:48
+.bashrc 12:24
+hello.txt 14:16
+.lesshst 16:26
+ls.out 17:52
+.profile 12:25
+.profile.bak 12:19
+.profile.bak1 13:12
+.viminfo 14:16
+ 
+user1@vm1:~$ ls -al | awk &#39;{printf &quot;%-20.20s %s\n&quot;,$9, $8}&#39;
+ 
+.                    14:16
+..                   21:49
+.bash_history        19:34
+.bash_logout         21:48
+.bashrc              12:24
+hello.txt            14:16
+.lesshst             16:26
+ls.out               17:52
+.profile             12:25
+.profile.bak         12:19
+.profile.bak1        13:12
+.viminfo             14:16
+user1@vm1:~$ ls -al | grep bash
+-rw------- 1 user1 user1 4865 Jun 15 19:34 .bash_history
+-rw-r--r-- 1 user1 user1  220 Jun  6 21:48 .bash_logout
+-rw-r--r-- 1 user1 user1 3184 Jun 14 12:24 .bashrc
+user1@vm1:~$ ls -al &gt; ls.out
+user1@vm1:~$ cat ls.out
+total 48
+drwxr-xr-x 2 user1 user1 4096 Jun 18 14:16 .
+drwxr-xr-x 3 root  root  4096 Jun  6 21:49 ..
+-rw------- 1 user1 user1 4865 Jun 15 19:34 .bash_history
+-rw-r--r-- 1 user1 user1  220 Jun  6 21:48 .bash_logout
+-rw-r--r-- 1 user1 user1 3184 Jun 14 12:24 .bashrc
+-rw-r--r-- 1 user1 user1   64 Jun 18 14:16 hello.txt
+-rw------- 1 user1 user1   89 Jun 18 16:26 .lesshst
+-rw-r--r-- 1 user1 user1    0 Jun 18 17:53 ls.out
+-rw-r--r-- 1 user1 user1  697 Jun  7 12:25 .profile
+-rw-r--r-- 1 user1 user1  741 Jun  7 12:19 .profile.bak
+-rw-r--r-- 1 user1 user1  741 Jun  7 13:12 .profile.bak1
+-rw------- 1 user1 user1  666 Jun 18 14:16 .viminfo
+user1@vm1:~$ cat ls.out | sed  &#39;s/bash/I replace this!!!/g&#39;
+total 48
+drwxr-xr-x 2 user1 user1 4096 Jun 18 14:16 .
+drwxr-xr-x 3 root  root  4096 Jun  6 21:49 ..
+-rw------- 1 user1 user1 4865 Jun 15 19:34 .I replace this!!!_history
+-rw-r--r-- 1 user1 user1  220 Jun  6 21:48 .I replace this!!!_logout
+-rw-r--r-- 1 user1 user1 3184 Jun 14 12:24 .I replace this!!!rc
+-rw-r--r-- 1 user1 user1   64 Jun 18 14:16 hello.txt
+-rw------- 1 user1 user1   89 Jun 18 16:26 .lesshst
+-rw-r--r-- 1 user1 user1    0 Jun 18 17:53 ls.out
+-rw-r--r-- 1 user1 user1  697 Jun  7 12:25 .profile
+-rw-r--r-- 1 user1 user1  741 Jun  7 12:19 .profile.bak
+-rw-r--r-- 1 user1 user1  741 Jun  7 13:12 .profile.bak1
+-rw------- 1 user1 user1  666 Jun 18 14:16 .viminfo
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br></div></div><h2 id="解释" tabindex="-1"><a class="header-anchor" href="#解释" aria-hidden="true">#</a> 解释</h2><ul><li>只打印目录列表中的前 5 个条目。</li><li>只打印目录列表中的后 5 个条目。</li><li>只打印修改时间和文件名。注意我如何使用<code>awk</code>，这比<code>cut</code>更聪明。这里的区别就是，<code>cut</code>只能将单个符号（我们这里是空格）理解为一种方式，来分离字段（字段分隔符），<code>awk</code>将任意数量的空格和 TAB 看做文件分隔符，所以没有必要使用<code>tr</code>来消除不必要的空格。</li><li>按此顺序打印文件名和修改时间。这又是<code>cat</code>不能做的事情。</li><li>工整地打印文件名和修改时间。注意现在输出如何变得更清晰。</li><li>仅打印目录列表中包含<code>bash</code>的行。</li><li>将目录列表的输出写入文件<code>ls.out</code>。</li><li>打印出<code>ls.out</code>。<code>cat</code>是最简单的可用程序，允许你打印出一个文件，没有更多了。尽管如此简单，但在构建复杂管道时非常有用。</li><li>打印出<code>ls.out</code>，将所有的<code>bash</code>条目替换为<code>I replace this!!!</code>。<code>sed</code>是一个强大的流编辑器，它非常非常非常有用。</li></ul><h2 id="附加题" tabindex="-1"><a class="header-anchor" href="#附加题" aria-hidden="true">#</a> 附加题</h2><ul><li>打开<code>head</code>，<code>tail</code>，<code>awk</code>， <code>grep</code>和<code>sed</code>的手册页。不要害怕，只要记住手册页面总是在那里。有了一些实践，你将能够实际了解他们。</li><li>查找<code>grep</code>选项，能够打印它找到的那行之前，或之后的一行。</li><li>使用 Google 搜索<code>awk printf</code>命令，尝试了解它如何工作。</li><li>阅读 <a href="https://archive.fo/9Zcyu" target="_blank" rel="noopener noreferrer">The Useless Use of Cat Award<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>。尝试那里的一些例子。</li></ul><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">上次更新: </span><!----></div><div class="meta-item contributors"><span class="meta-item-label">贡献者: </span><span class="meta-item-info"><!--[--><!--[--><span class="contributor" title="email: yzqdev@outlook.com">yzqdev</span><!----><!--]--><!--]--></span></div></footer><nav class="page-nav"><p class="inner"><span class="prev"><a href="/llthw-zh/ex7.html" class="" aria-label="练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv"><!--[--><!--]--> 练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv <!--[--><!--]--></a></span><span class="next"><a href="/llthw-zh/ex9.html" class="" aria-label="练习 9：Bash：任务控制，jobs，fg"><!--[--><!--]--> 练习 9：Bash：任务控制，jobs，fg <!--[--><!--]--></a></span></p></nav><!--[--><!--]--></main><!--]--></div><!----><!--]--></div>
+    <script type="module" src="/llthw-zh/assets/app.91d0dc40.js" defer></script>
+  </body>
+</html>

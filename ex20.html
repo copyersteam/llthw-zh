@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="generator" content="VuePress 2.0.0-beta.35">
+    <style>
+      :root {
+        --c-bg: #fff;
+      }
+      html.dark {
+        --c-bg: #22272e;
+      }
+      html, body {
+        background-color: var(--c-bg);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem('vuepress-color-scheme');
+			const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (userMode === 'dark' || (userMode !== 'light' && systemDarkMode)) {
+				document.documentElement.classList.toggle('dark', true);
+			}
+    </script>
+    <title>练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs | VuePress</title><meta name="description" content="Vue 驱动的静态网站生成器">
+    <link rel="modulepreload" href="/llthw-zh/assets/app.91d0dc40.js"><link rel="modulepreload" href="/llthw-zh/assets/ex20.html.a8384b9f.js"><link rel="modulepreload" href="/llthw-zh/assets/ex20.html.4bae01ee.js">
+    <link rel="stylesheet" href="/llthw-zh/assets/style.640a10cb.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><!--[--><header ref_key="navbar" class="navbar"><div class="toggle-sidebar-button" title="切换侧边栏" aria-expanded="false" role="button" tabindex="0"><div class="icon" aria-hidden="true"><span></span><span></span><span></span></div></div><span><a href="/llthw-zh/" class=""><!----><span class="site-name">VuePress</span></a></span><div class="navbar-items-wrapper" style=""><!--[--><!--]--><!----><!--[--><!--]--><button class="toggle-dark-button" title="切换夜间模式"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><form class="search-box" role="search"><input type="search" placeholder="搜索文档" autocomplete="off" spellcheck="false" value><!----></form></div></header><!--]--><div class="sidebar-mask"></div><!--[--><aside class="sidebar"><!----><!--[--><!--]--><ul class="sidebar-items"><!--[--><li><p tabindex="0" class="sidebar-item sidebar-heading active">教程 <!----></p><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a href="/llthw-zh/intro.html" class="sidebar-item" aria-label="引言"><!--[--><!--]--> 引言 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex0.html" class="sidebar-item" aria-label="练习 0：起步"><!--[--><!--]--> 练习 0：起步 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex1.html" class="sidebar-item" aria-label="练习 1：文本编辑器，vim"><!--[--><!--]--> 练习 1：文本编辑器，vim <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex2.html" class="sidebar-item" aria-label="练习 2：文本浏览器，少即是多"><!--[--><!--]--> 练习 2：文本浏览器，少即是多 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex3.html" class="sidebar-item" aria-label="练习 3：Bash：Shell、.profile、.bashrc、.bash_history。"><!--[--><!--]--> 练习 3：Bash：Shell、.profile、.bashrc、.bash_history。 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex4.html" class="sidebar-item" aria-label="练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch"><!--[--><!--]--> 练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex5.html" class="sidebar-item" aria-label="练习 5：Bash：环境变量，env，set，export"><!--[--><!--]--> 练习 5：Bash：环境变量，env，set，export <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex6.html" class="sidebar-item" aria-label="练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales"><!--[--><!--]--> 练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex7.html" class="sidebar-item" aria-label="练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv"><!--[--><!--]--> 练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex8.html" class="sidebar-item" aria-label="练习 8：更多的重定向和过滤：head，tail，awk，grep，sed"><!--[--><!--]--> 练习 8：更多的重定向和过滤：head，tail，awk，grep，sed <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex9.html" class="sidebar-item" aria-label="练习 9：Bash：任务控制，jobs，fg"><!--[--><!--]--> 练习 9：Bash：任务控制，jobs，fg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex10.html" class="sidebar-item" aria-label="练习 10：Bash：程序退出代码（返回状态）"><!--[--><!--]--> 练习 10：Bash：程序退出代码（返回状态） <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex11.html" class="sidebar-item" aria-label="练习 11：总结"><!--[--><!--]--> 练习 11：总结 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex12.html" class="sidebar-item" aria-label="练习 12：文档：man，info"><!--[--><!--]--> 练习 12：文档：man，info <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex13.html" class="sidebar-item" aria-label="练习 13：文档：Google"><!--[--><!--]--> 练习 13：文档：Google <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex14.html" class="sidebar-item" aria-label="练习 14：包管理：Debian 包管理工具aptitude"><!--[--><!--]--> 练习 14：包管理：Debian 包管理工具aptitude <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex15.html" class="sidebar-item" aria-label="练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d"><!--[--><!--]--> 练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex16.html" class="sidebar-item" aria-label="练习 16：处理进程，ps，kill"><!--[--><!--]--> 练习 16：处理进程，ps，kill <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex17.html" class="sidebar-item" aria-label="练习 17：任务调度：cron，at"><!--[--><!--]--> 练习 17：任务调度：cron，at <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex18.html" class="sidebar-item" aria-label="练习 18：日志：/var/log，rsyslog，logger"><!--[--><!--]--> 练习 18：日志：/var/log，rsyslog，logger <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex19.html" class="sidebar-item" aria-label="练习 19：文件系统：挂载，mount，/etc/fstab"><!--[--><!--]--> 练习 19：文件系统：挂载，mount，/etc/fstab <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex20.html" class="router-link-active router-link-exact-active router-link-active sidebar-item active" aria-label="练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs"><!--[--><!--]--> 练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs <!--[--><!--]--></a><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a aria-current="page" href="/llthw-zh/ex20.html#这样做" class="router-link-active router-link-exact-active sidebar-item" aria-label="这样做"><!--[--><!--]--> 这样做 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex20.html#你会看到什么" class="router-link-active router-link-exact-active sidebar-item" aria-label="你会看到什么"><!--[--><!--]--> 你会看到什么 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex20.html#解释" class="router-link-active router-link-exact-active sidebar-item" aria-label="解释"><!--[--><!--]--> 解释 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex20.html#附加题" class="router-link-active router-link-exact-active sidebar-item" aria-label="附加题"><!--[--><!--]--> 附加题 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><li><a href="/llthw-zh/ex21.html" class="sidebar-item" aria-label="练习 21：文件系统：修改根目录，chroot"><!--[--><!--]--> 练习 21：文件系统：修改根目录，chroot <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex22.html" class="sidebar-item" aria-label="练习 22：文件系统：移动数据，tar，dd"><!--[--><!--]--> 练习 22：文件系统：移动数据，tar，dd <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex23.html" class="sidebar-item" aria-label="练习 23：文件系统：权限，chown，chmod，umask"><!--[--><!--]--> 练习 23：文件系统：权限，chown，chmod，umask <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex24.html" class="sidebar-item" aria-label="练习 24：接口配置，ifconfig，netstat，iproute2，ss，route"><!--[--><!--]--> 练习 24：接口配置，ifconfig，netstat，iproute2，ss，route <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex25.html" class="sidebar-item" aria-label="练习 25：网络：配置文件，/etc/network/interfaces"><!--[--><!--]--> 练习 25：网络：配置文件，/etc/network/interfaces <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex26.html" class="sidebar-item" aria-label="练习 26：网络：封包过滤配置，iptables"><!--[--><!--]--> 练习 26：网络：封包过滤配置，iptables <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex27.html" class="sidebar-item" aria-label="练习 27：安全 Shell，ssh，sshd，scp"><!--[--><!--]--> 练习 27：安全 Shell，ssh，sshd，scp <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex28.html" class="sidebar-item" aria-label="练习 28：性能：获取性能情况，uptime，free，top"><!--[--><!--]--> 练习 28：性能：获取性能情况，uptime，free，top <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex29.html" class="sidebar-item" aria-label="练习 29：内核：内核消息，dmesg"><!--[--><!--]--> 练习 29：内核：内核消息，dmesg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex30.html" class="sidebar-item" aria-label="练习 30：打磨、洗练、重复：总复习"><!--[--><!--]--> 练习 30：打磨、洗练、重复：总复习 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/next.html" class="sidebar-item" aria-label="下一步做什么"><!--[--><!--]--> 下一步做什么 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/mdi.html" class="sidebar-item" aria-label="Debian 手动安装"><!--[--><!--]--> Debian 手动安装 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><!--]--></ul><!--[--><!--]--></aside><!--]--><!--[--><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><h1 id="练习-20-文件系统-修改和创建文件系统-tune2fs-mkfs" tabindex="-1"><a class="header-anchor" href="#练习-20-文件系统-修改和创建文件系统-tune2fs-mkfs" aria-hidden="true">#</a> 练习 20：文件系统：修改和创建文件系统，<code>tune2fs</code>，<code>mkfs</code></h1><blockquote><p>原文：<a href="https://archive.fo/CzHiN" target="_blank" rel="noopener noreferrer">Exercise 20. Filesystems: modifying and creating filesystems, tune2fs, mkfs<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>译者：<a href="https://github.com/wizardforcel" target="_blank" rel="noopener noreferrer">飞龙<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>协议：<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>自豪地采用<a href="https://translate.google.cn/" target="_blank" rel="noopener noreferrer">谷歌翻译<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><p>让我来介绍一下文件系统相关的术语：</p><ul><li><a href="http://en.wikipedia.org/wiki/File_system" target="_blank" rel="noopener noreferrer">文件系统<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> - 一种组织数据的方式，通过提供存储，检索和更新数据的过程，以及管理包含它的设备上的可用空间，数据预期在终止后保留。</li><li>Inode - 索引节点是一种结构，存储文件系统对象（文件，目录等）的所有信息，除数据内容和文件名之外。</li><li>块 - 可以分配的最小块磁盘空间。它通常默认为 4096 字节，或 4 千字节。</li><li>日志 - 一种结构，允许文件系统跟踪什么时候写入了什么。这样可以快速了解在断电或类似问题时，未正确写入的内容。</li></ul><p>接下来，让我给大家简要介绍文件系统的工作原理。为了按名称访问文件，Linux 内核将：</p><ul><li>在包含该文件的目录中查找文件名。</li><li>获取文件 Inode 号。</li><li>通过 Inode 区域中的数字查找 Inode。</li><li>读取此 Inode 的数据块的位置。</li><li>使用这个位置在数据区域中从这个块读取文件。</li></ul><p>现在，每个文件系统都有很多与之相关的选项。这些选项可以通过<code>tune2fs </code>程序查看和更改。这是一个带注解的<code>tune2fs -l /dev/sda8</code>的输出：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ sudo tune2fs -l /dev/sda8
+tune2fs 1.41.12 (17-May-2010)
+# 只是个标签，可以是任何东西，或者没有东西
+Filesystem volume name:   &lt;none&gt;
+# 这里应该是最后的挂载点
+Last mounted on:          &lt;not available&gt;
+# 唯一的文件系统标识符
+Filesystem UUID:          869db6b4-aea0-4a25-8bd2-f0b53dd7a88e
+# 已知位置的特殊数字，它定义了 FS 的类型，尝试这个：
+# sudo dd if=/dev/sda8 of=/dev/stdout bs=1 skip=1080 count=2 | hexdump -C
+Filesystem magic number:  0xEF53
+# FS 版本
+Filesystem revision #:    1 (dynamic)
+# 启用的 FS 功能
+Filesystem features:
+    # 这是一个日志文件系统。日志文件系统是一个文件系统，
+    # 它跟踪日志中发生的变化（通常是一个循环日志，
+    # 在文件系统的特定位置），在提交给主文件系统之前。
+    # 在系统崩溃或者断电的事件中，这种文件系统能够更快
+    # 恢复，并且不可能毁坏。
+    # http://en.wikipedia.org/wiki/Journaling_file_system
+    has_journal
+    # 拥有扩展属性，例如扩展的 ACL。
+    ext_attr
+    # 为系统信息保留空间，这允许 FS 改变大小。
+    resize_inode
+    # 使用索引来加速大目录中的查找。
+    dir_index
+    # 在目录条目中储存文件类型信息。
+    filetype
+    # 意思是需要运行 fsck。
+    needs_recovery
+    # 更少的超级块备份，在大 FS 上节约空间。
+    sparse_super
+    # 是否可以包含 &gt; 2GB 的文件。在创建 &gt;2GB 的文件时，内核会自动设置它。
+    large_file
+# dir_index 中使用哪个哈希
+Filesystem flags:         signed_directory_hash
+# 挂载时使用什么选项
+Default mount options:    (none)
+# 是否需要执行 fsck
+Filesystem state:         clean
+# 错误时做什么：继续，以只读方式重新挂载，或者报错？
+Errors behavior:          Continue
+# 哪个 OS 使用这个 FS
+Filesystem OS type:       Linux
+# 索引节点总数。索引节点就是 &quot;inode&quot;。它的结构是： 
+# 储存所有文件系统对象（文件、目录，以及其他）的信息
+# 除了文件内容和文件名称。也就是说，
+# 你的文件数量不能多于索引节点数量。
+# 这就是索引节点结构，它描述了里面储存了什么信息：
+#/* 出现在 Inode 表中的 Inode 结构 */
+#struct dinode
+#{ ushort  di_mode;     /* mode and type of file   */
+#  short   di_nlink;    /* number of links to file */
+#  ushort  di_uid;      /* owner&#39;s user id         */
+#  ushort  di_gid;      /* owner&#39;s group id        */
+#  off_t   di_size;     /* number of bytes in file */
+#  char    di_addr[39]; /* disk block addresses    */
+#  char    di_gen;      /* file generation number  */
+#  time_t  di_atime;    /* time last accessed      */
+#  time_t  di_mtime;    /* time last modified      */
+#  time_t  di_ctime;    /* time created            */
+#};
+# 这里也有很好的解释：
+# http://support.tux4u.nl/dokuwiki/lib/exe/fetch.php?media=linux:disk_bestandssysteem:inode.pdf
+Inode count:              62464
+# 当前有多少空闲节点
+Free inodes:              62452
+# 设备上的第一个块。由于每个分区都表示为单独的设备，
+# 它设为 0。
+First block:              0
+# 这是文件系统中，第一个索引节点的节点号。
+First inode:              11
+# 索引节点的大小，以字节为单位。在新的 Linux 发行版中，这有时会默认增加，
+# 为了允许文件中扩展属性的存储，例如，微秒时间戳。
+Inode size:               256
+# 添加索引节点字段所需的空间
+Required extra isize:     28
+# 添加索引节点字段要求的空间。不重要，因为这个大小
+# 任何时候都是所需空间
+Desired extra isize:      28
+# 一个隐形节点，它储存文件系统的日志。
+Journal inode:            8
+# 块的总数。块是磁盘空间可分配的最小单位。
+# 你可以使用下面的公式，以 GB 计算分区大小：
+# 块的数量 * 块的大小
+# ------------------------
+#         1024^3
+Block count:              249856
+# 有多少块为超极用户保留。普通用户不能使用这个
+# 保留空间。这是为了使系统保持运行，以防一些流氓软件
+# 决定塞满所有可用的磁盘空间。
+Reserved block count:     12492
+# 当前有多少块是空闲的。 
+Free blocks:              241518
+# 用于目录索引（dir_index）的算法。
+Default directory hash:   half_md4
+# 目前为止，我可以说，这是用于 dir_index 哈希算法的种子值。
+Directory Hash Seed:      d02c6099-bd06-4d29-a3d7-779df2aa2410
+# 日志备份选项。
+Journal backup:           inode blocks                          #
+# 块的大小，以字节为单位。4096 字节就是 4 KB。
+Block size:               4096
+# 在 ex3 FS 中未实现。这是一个特性，它能够在一个块中写入多个小文件，
+# 来节约空间。
+Fragment size:            4096
+# 保留的控件，所以组描述符表可能在未来会增长。
+Reserved GDT blocks:      60
+# 每个块组的块数量。块组包含文件系统重要的控制信息的冗余副本。
+# （超级块和文件描述符），并包含一部分文件系统contains a
+# （块的位图，索引节点的位图，一部分索引节点表，以及数据块）。
+# 块组的结构在下表中展示：
+#,---------+---------+---------+---------+---------+---------,
+#| 超级    | FS      | 块的    | Inode   | Inode   | 数据    |
+#| 块      | 描述符  | 位图    | 位图    | 表      | 块      |
+#`---------+---------+---------+---------+---------+---------&#39;
+# http://tldp.org/HOWTO/Filesystems-HOWTO-6.html
+Blocks per group:         32768
+# 每个组的片段数量。因为 ext3 FS 中没有片段，
+# 这等于每个组的块数量。
+Fragments per group:      32768
+# 每个组的索引节点数量。
+Inodes per group:         7808
+# 每个组的索引节点块。索引节点块是一个表的索引，
+# 描述了所有文件属性，除了文件名称。它拥有数据块的索引。
+# 数据块包含文件真实内容。
+# http://www.porcupine.org/forensics/forensic-discovery/chapter3.html
+Inode blocks per group:   488
+# FS 的创建时间。
+Filesystem created:       Mon Jul  2 06:16:24 2012
+# 最后的 FS 挂载时间。
+Last mount time:          Mon Jul  2 06:57:21 2012
+# 最后的 FS 写入时间。
+Last write time:          Mon Jul  2 06:57:21 2012
+# FS 的挂载次数。
+Mount count:              6
+# 自动检查前的次数。如果文件系统的挂载次数是这个
+# 或者检查间隔到了，那么 FS 会自动检查。
+Maximum mount count:      34
+# 最后的 fsck 执行时间
+Last checked:             Mon Jul  2 06:16:24 2012
+# 下一个 FS 检查间隔. 如果这个间隔到了，
+# 或者到达了最大挂载数，FS 会自动检查。
+Check interval:           15552000 (6 months)
+# 下一个 FS 检查间隔，以人类可读的格式。
+Next check after:         Sat Dec 29 05:16:24 2012
+# 能够使用保留空间的用户的用户 ID。
+# 它默认是 root 用户（超级用户）
+Reserved blocks uid:      0 (user root)
+# 能够使用保留空间的用户的组 ID。
+# 它默认是 root 组
+Reserved blocks gid:      0 (group root)
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br><span class="line-number">147</span><br><span class="line-number">148</span><br><span class="line-number">149</span><br><span class="line-number">150</span><br><span class="line-number">151</span><br><span class="line-number">152</span><br><span class="line-number">153</span><br></div></div><p>很可怕，是嘛？实际上你会发现，这个描述中只有几个参数实际上是有用的，它们是：</p><ul><li>保留块数量。</li><li>最大挂载数。</li><li>检查间隔。</li></ul><p>通常你不需要修改其他参数，默认情况下它们是正常的。以下是使用文件系统的命令列表：</p><ul><li><code>mkfs.ext3</code> - 创建一个<code>ext3</code>文件系统。如果在具有现有文件系统的设备上执行此命令，则该文件系统将被销毁，因此请小心。</li><li><code>mkfs.ext4</code> - 创建一个<code>ext4</code>文件系统。这其实是相同的程序，尝试<code>sudo find /sbin -samefile sbin/mkfs.ext3</code>。</li><li><code>tune2fs</code> - 打印并更改文件系统参数。</li></ul><p>现在，你将学习如何创建新的文件系统并修改其参数。</p><h2 id="这样做" tabindex="-1"><a class="header-anchor" href="#这样做" aria-hidden="true">#</a> 这样做</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>1: sudo -s
+2: umount /tmp
+3: blkid | grep /dev/sda8
+4: mkfs.ext3 /dev/sda8
+5: blkid | grep /dev/sda8
+6: blkid | grep /dev/sda8 &gt;&gt; /etc/fstab
+7: vim /etc/fstab
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br></div></div><p>现在你必须将<code>/tmp</code>那一行的 UUID。</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code># /tmp was on /dev/sda8 during installation
+UUID=869db6b4-aea0-4a25-8bd2-f0b53dd7a88e /tmp            ext3    defaults        0       2
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br></div></div><p>替换为你添加到文件末尾的那个：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>/dev/sda8: UUID=&quot;53eed507-18e8-4f71-9003-bcea8c4fd2dd&quot; TYPE=&quot;ext3&quot; SEC_TYPE=&quot;ext2&quot;
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br></div></div><p>因为根据定义，你的 UUID 必须跟我的不同。在替换 UUID，编写文件，退出之后，继续并输入：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code> 8: mount /tmp
+ 9: tune2fs -c 2 /dev/sda8
+10: unmount /tmp
+11: fsck /tmp
+12: for ((i=1;i&lt;=4;i++)); do mount /tmp ; umount /tmp ; cat /var/log/messages | tail -n 4 ; done
+13: fsck /tmp
+14: mount -a
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br></div></div><h2 id="你会看到什么" tabindex="-1"><a class="header-anchor" href="#你会看到什么" aria-hidden="true">#</a> 你会看到什么</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ sudo -s
+root@vm1:/home/user1# umount /tmp
+root@vm1:/home/user1# blkid | grep /dev/sda8
+/dev/sda8: UUID=&quot;869db6b4-aea0-4a25-8bd2-f0b53dd7a88e&quot; TYPE=&quot;ext3&quot; SEC_TYPE=&quot;ext2&quot;
+root@vm1:/home/user1# mkfs.ext3 /dev/sda8
+mke2fs 1.41.12 (17-May-2010)
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+62464 inodes, 249856 blocks
+12492 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=255852544
+8 block groups
+32768 blocks per group, 32768 fragments per group
+7808 inodes per group
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376
+ 
+Writing inode tables: done
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+ 
+This filesystem will be automatically checked every 28 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.
+root@vm1:/home/user1# blkid | grep /dev/sda8
+/dev/sda8: UUID=&quot;53eed507-18e8-4f71-9003-bcea8c4fd2dd&quot; TYPE=&quot;ext3&quot; SEC_TYPE=&quot;ext2&quot;
+root@vm1:/home/user1# blkid | grep /dev/sda8 &gt;&gt; /etc/fstab
+root@vm1:/home/user1# vim /etc/fstab
+# that works even if disks are added and removed. See fstab(5).
+#
+# &lt;file system&gt; &lt;mount point&gt;   &lt;type&gt;  &lt;options&gt;       &lt;dump&gt;  &lt;pass&gt;
+proc            /proc           proc    defaults        0       0
+# / was on /dev/vda5 during installation
+UUID=128559db-a2e0-4983-91ad-d4f43f27da49 /               ext3    errors=re
+# /home was on /dev/vda10 during installation
+UUID=32852d29-ddee-4a8d-9b1e-f46569a6b897 /home           ext3    defaults
+# /tmp was on /dev/sda8 during installation
+UUID=869db6b4-aea0-4a25-8bd2-f0b53dd7a88e /tmp            ext3    defaults
+# /usr was on /dev/vda9 during installation
+UUID=0221be16-496b-4277-b131-2371ce097b44 /usr            ext3    defaults
+# /var was on /dev/vda8 during installation
+UUID=2db00f94-3605-4229-8813-0ee23ad8634e /var            ext3    defaults
+# swap was on /dev/vda6 during installation
+UUID=3a936af2-2c04-466d-b98d-09eacc5d104c none            swap    sw
+/dev/scd0       /media/cdrom0   udf,iso9660 user,noauto     0       0
+/dev/sda8: UUID=&quot;53eed507-18e8-4f71-9003-bcea8c4fd2dd&quot; TYPE=&quot;ext3&quot; SEC_TYPE
+                                                         22,1          Bot
+ 
+#
+# &lt;file system&gt; &lt;mount point&gt;   &lt;type&gt;  &lt;options&gt;       &lt;dump&gt;  &lt;pass&gt;
+proc            /proc           proc    defaults        0       0
+# / was on /dev/vda5 during installation
+UUID=128559db-a2e0-4983-91ad-d4f43f27da49 /               ext3    errors=re
+# /home was on /dev/vda10 during installation
+UUID=32852d29-ddee-4a8d-9b1e-f46569a6b897 /home           ext3    defaults
+# /tmp was on /dev/sda8 during installation
+UUID=53eed507-18e8-4f71-9003-bcea8c4fd2dd /tmp            ext3    defaults
+# /usr was on /dev/vda9 during installation
+UUID=0221be16-496b-4277-b131-2371ce097b44 /usr            ext3    defaults
+# /var was on /dev/vda8 during installation
+UUID=2db00f94-3605-4229-8813-0ee23ad8634e /var            ext3    defaults
+ 
+# swap was on /dev/vda6 during installation
+UUID=3a936af2-2c04-466d-b98d-09eacc5d104c none            swap    sw
+/dev/scd0       /media/cdrom0   udf,iso9660 user,noauto     0       0
+&quot;/etc/fstab&quot; 22L, 1277C written
+root@vm1:/home/user1# mount /tmp
+root@vm1:/home/user1# tune2fs -c 2 /dev/sda8
+tune2fs 1.41.12 (17-May-2010)
+Setting maximal mount count to 2
+root@vm1:/home/user1# unmount /tmp
+root@vm1:/home/user1# fsck /tmp
+fsck from util-linux-ng 2.17.2
+e2fsck 1.41.12 (17-May-2010)
+/dev/sda8: clean, 11/62464 files, 8337/249856 blocks (check in 2 mounts)
+root@vm1:/home/user1# for ((i=1;i&lt;=4;i++)); do mount /tmp ; umount /tmp ; cat /var/log/messages | tail -n 4 ; done
+Jul  2 12:11:43 vm1 kernel: [21080.920658] EXT3-fs: mounted filesystem with ordered data mode.
+Jul  2 12:11:58 vm1 kernel: [21096.363787] kjournald starting.  Commit interval 5 seconds
+Jul  2 12:11:58 vm1 kernel: [21096.364167] EXT3 FS on sda8, internal journal
+Jul  2 12:11:58 vm1 kernel: [21096.364171] EXT3-fs: mounted filesystem with ordered data mode.
+Jul  2 12:11:58 vm1 kernel: [21096.364171] EXT3-fs: mounted filesystem with ordered data mode.
+Jul  2 12:11:58 vm1 kernel: [21096.381372] kjournald starting.  Commit interval 5 seconds
+Jul  2 12:11:58 vm1 kernel: [21096.381539] EXT3 FS on sda8, internal journal
+Jul  2 12:11:58 vm1 kernel: [21096.381542] EXT3-fs: mounted filesystem with ordered data mode.
+Jul  2 12:11:58 vm1 kernel: [21096.396152] kjournald starting.  Commit interval 5 seconds
+Jul  2 12:11:58 vm1 kernel: [21096.396158] EXT3-fs warning: maximal mount count reached, running e2fsck is recommended
+Jul  2 12:11:58 vm1 kernel: [21096.396344] EXT3 FS on sda8, internal journal
+Jul  2 12:11:58 vm1 kernel: [21096.396348] EXT3-fs: mounted filesystem with ordered data mode.
+Jul  2 12:11:58 vm1 kernel: [21096.412434] kjournald starting.  Commit interval 5 seconds
+Jul  2 12:11:58 vm1 kernel: [21096.412441] EXT3-fs warning: maximal mount count reached, running e2fsck is recommended
+Jul  2 12:11:58 vm1 kernel: [21096.412610] EXT3 FS on sda8, internal journal
+Jul  2 12:11:58 vm1 kernel: [21096.412612] EXT3-fs: mounted filesystem with ordered data mode.
+root@vm1:/home/user1# fsck /tmp
+fsck from util-linux-ng 2.17.2
+e2fsck 1.41.12 (17-May-2010)
+/dev/sda8 has been mounted 4 times without being checked, check forced.
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+/dev/sda8: 11/62464 files (0.0% non-contiguous), 8337/249856 blocks
+root@vm1:/home/user1# mount -a
+root@vm1:/home/user1#
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br></div></div><h2 id="解释" tabindex="-1"><a class="header-anchor" href="#解释" aria-hidden="true">#</a> 解释</h2><ol><li>执行 root（超级用户）shell。</li><li>解除挂载<code>/tmp</code>，从<code>/etc/fstab</code>读取它的位置 。</li><li>打印出<code>/dev/sda8</code>的UUID，<code>/dev/sda8</code>是挂载在<code>/tmp</code>上的文件系统。</li><li>在<code>/dev/sda8</code>上创建一个新的文件系统。</li><li>再次打印出<code>/dev/sda8</code>的 UUID，注意如何变化，因为你创建了一个新的文件系统。</li><li>将此 UUID 附加到<code>/etc/fstab</code>。</li><li>打开<code>/etc/fstab</code>进行编辑。</li><li>挂载新创建的文件系统。这实际上是一个检查，是否你已经正确替换了 UUID，如果不是会有一个错误消息。</li><li>设置每两次挂载检查<code>/dev/sda8</code>。</li><li>解除挂载<code>/dev/sda8</code>。</li><li>检查<code>/dev/sda8</code>。</li><li>挂载，接触挂载<code>/dev/sda8</code>， 并连续四次向你展示<code>/var/log/messages/</code>的最后4 行。请注意，从第三次开始，挂载系统通知你 需要运行<code>e2fsck</code>。如果你重新启动系统，它将为你运行<code>e2fsck</code>。</li><li>检查<code>/dev/sda8</code>。<code>fsck</code>确定文件系统类型并自动调用<code>e2fsck</code>。</li><li>挂载所有文件系统。如果没有错误，你已经完成了这个练习。</li></ol><h2 id="附加题" tabindex="-1"><a class="header-anchor" href="#附加题" aria-hidden="true">#</a> 附加题</h2><ul><li>阅读<code>man mkfs</code>，<code>man mkfs.ext3</code>，<code>man tune2fs</code>。</li><li>阅读页面顶部的<code>tune2fs -l</code>列表，并为你的所有文件系统读取幻数。</li><li>手动计算文件系统的大小，使用在<code>tune2fs -l</code>列表的块描述中提供的公式。</li><li>阅读这个幻灯片，并完成它展示的东西：<a href="http://mcgrewsecurity.com/training/extx.pdf" target="_blank" rel="noopener noreferrer">http://mcgrewsecurity.com/training/extx.pdf<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a>。</li></ul><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">上次更新: </span><!----></div><div class="meta-item contributors"><span class="meta-item-label">贡献者: </span><span class="meta-item-info"><!--[--><!--[--><span class="contributor" title="email: yzqdev@outlook.com">yzqdev</span><!----><!--]--><!--]--></span></div></footer><nav class="page-nav"><p class="inner"><span class="prev"><a href="/llthw-zh/ex19.html" class="" aria-label="练习 19：文件系统：挂载，mount，/etc/fstab"><!--[--><!--]--> 练习 19：文件系统：挂载，mount，/etc/fstab <!--[--><!--]--></a></span><span class="next"><a href="/llthw-zh/ex21.html" class="" aria-label="练习 21：文件系统：修改根目录，chroot"><!--[--><!--]--> 练习 21：文件系统：修改根目录，chroot <!--[--><!--]--></a></span></p></nav><!--[--><!--]--></main><!--]--></div><!----><!--]--></div>
+    <script type="module" src="/llthw-zh/assets/app.91d0dc40.js" defer></script>
+  </body>
+</html>

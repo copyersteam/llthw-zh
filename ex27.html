@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="generator" content="VuePress 2.0.0-beta.35">
+    <style>
+      :root {
+        --c-bg: #fff;
+      }
+      html.dark {
+        --c-bg: #22272e;
+      }
+      html, body {
+        background-color: var(--c-bg);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem('vuepress-color-scheme');
+			const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (userMode === 'dark' || (userMode !== 'light' && systemDarkMode)) {
+				document.documentElement.classList.toggle('dark', true);
+			}
+    </script>
+    <title>练习 27：安全 Shell，ssh，sshd，scp | VuePress</title><meta name="description" content="Vue 驱动的静态网站生成器">
+    <link rel="modulepreload" href="/llthw-zh/assets/app.91d0dc40.js"><link rel="modulepreload" href="/llthw-zh/assets/ex27.html.19945c47.js"><link rel="modulepreload" href="/llthw-zh/assets/ex27.html.50a0655b.js">
+    <link rel="stylesheet" href="/llthw-zh/assets/style.640a10cb.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><!--[--><header ref_key="navbar" class="navbar"><div class="toggle-sidebar-button" title="切换侧边栏" aria-expanded="false" role="button" tabindex="0"><div class="icon" aria-hidden="true"><span></span><span></span><span></span></div></div><span><a href="/llthw-zh/" class=""><!----><span class="site-name">VuePress</span></a></span><div class="navbar-items-wrapper" style=""><!--[--><!--]--><!----><!--[--><!--]--><button class="toggle-dark-button" title="切换夜间模式"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><form class="search-box" role="search"><input type="search" placeholder="搜索文档" autocomplete="off" spellcheck="false" value><!----></form></div></header><!--]--><div class="sidebar-mask"></div><!--[--><aside class="sidebar"><!----><!--[--><!--]--><ul class="sidebar-items"><!--[--><li><p tabindex="0" class="sidebar-item sidebar-heading active">教程 <!----></p><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a href="/llthw-zh/intro.html" class="sidebar-item" aria-label="引言"><!--[--><!--]--> 引言 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex0.html" class="sidebar-item" aria-label="练习 0：起步"><!--[--><!--]--> 练习 0：起步 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex1.html" class="sidebar-item" aria-label="练习 1：文本编辑器，vim"><!--[--><!--]--> 练习 1：文本编辑器，vim <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex2.html" class="sidebar-item" aria-label="练习 2：文本浏览器，少即是多"><!--[--><!--]--> 练习 2：文本浏览器，少即是多 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex3.html" class="sidebar-item" aria-label="练习 3：Bash：Shell、.profile、.bashrc、.bash_history。"><!--[--><!--]--> 练习 3：Bash：Shell、.profile、.bashrc、.bash_history。 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex4.html" class="sidebar-item" aria-label="练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch"><!--[--><!--]--> 练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex5.html" class="sidebar-item" aria-label="练习 5：Bash：环境变量，env，set，export"><!--[--><!--]--> 练习 5：Bash：环境变量，env，set，export <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex6.html" class="sidebar-item" aria-label="练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales"><!--[--><!--]--> 练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex7.html" class="sidebar-item" aria-label="练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv"><!--[--><!--]--> 练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex8.html" class="sidebar-item" aria-label="练习 8：更多的重定向和过滤：head，tail，awk，grep，sed"><!--[--><!--]--> 练习 8：更多的重定向和过滤：head，tail，awk，grep，sed <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex9.html" class="sidebar-item" aria-label="练习 9：Bash：任务控制，jobs，fg"><!--[--><!--]--> 练习 9：Bash：任务控制，jobs，fg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex10.html" class="sidebar-item" aria-label="练习 10：Bash：程序退出代码（返回状态）"><!--[--><!--]--> 练习 10：Bash：程序退出代码（返回状态） <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex11.html" class="sidebar-item" aria-label="练习 11：总结"><!--[--><!--]--> 练习 11：总结 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex12.html" class="sidebar-item" aria-label="练习 12：文档：man，info"><!--[--><!--]--> 练习 12：文档：man，info <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex13.html" class="sidebar-item" aria-label="练习 13：文档：Google"><!--[--><!--]--> 练习 13：文档：Google <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex14.html" class="sidebar-item" aria-label="练习 14：包管理：Debian 包管理工具aptitude"><!--[--><!--]--> 练习 14：包管理：Debian 包管理工具aptitude <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex15.html" class="sidebar-item" aria-label="练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d"><!--[--><!--]--> 练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex16.html" class="sidebar-item" aria-label="练习 16：处理进程，ps，kill"><!--[--><!--]--> 练习 16：处理进程，ps，kill <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex17.html" class="sidebar-item" aria-label="练习 17：任务调度：cron，at"><!--[--><!--]--> 练习 17：任务调度：cron，at <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex18.html" class="sidebar-item" aria-label="练习 18：日志：/var/log，rsyslog，logger"><!--[--><!--]--> 练习 18：日志：/var/log，rsyslog，logger <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex19.html" class="sidebar-item" aria-label="练习 19：文件系统：挂载，mount，/etc/fstab"><!--[--><!--]--> 练习 19：文件系统：挂载，mount，/etc/fstab <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex20.html" class="sidebar-item" aria-label="练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs"><!--[--><!--]--> 练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex21.html" class="sidebar-item" aria-label="练习 21：文件系统：修改根目录，chroot"><!--[--><!--]--> 练习 21：文件系统：修改根目录，chroot <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex22.html" class="sidebar-item" aria-label="练习 22：文件系统：移动数据，tar，dd"><!--[--><!--]--> 练习 22：文件系统：移动数据，tar，dd <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex23.html" class="sidebar-item" aria-label="练习 23：文件系统：权限，chown，chmod，umask"><!--[--><!--]--> 练习 23：文件系统：权限，chown，chmod，umask <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex24.html" class="sidebar-item" aria-label="练习 24：接口配置，ifconfig，netstat，iproute2，ss，route"><!--[--><!--]--> 练习 24：接口配置，ifconfig，netstat，iproute2，ss，route <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex25.html" class="sidebar-item" aria-label="练习 25：网络：配置文件，/etc/network/interfaces"><!--[--><!--]--> 练习 25：网络：配置文件，/etc/network/interfaces <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex26.html" class="sidebar-item" aria-label="练习 26：网络：封包过滤配置，iptables"><!--[--><!--]--> 练习 26：网络：封包过滤配置，iptables <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex27.html" class="router-link-active router-link-exact-active router-link-active sidebar-item active" aria-label="练习 27：安全 Shell，ssh，sshd，scp"><!--[--><!--]--> 练习 27：安全 Shell，ssh，sshd，scp <!--[--><!--]--></a><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a aria-current="page" href="/llthw-zh/ex27.html#这样做" class="router-link-active router-link-exact-active sidebar-item" aria-label="这样做"><!--[--><!--]--> 这样做 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex27.html#你会看到什么" class="router-link-active router-link-exact-active sidebar-item" aria-label="你会看到什么"><!--[--><!--]--> 你会看到什么 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex27.html#解释" class="router-link-active router-link-exact-active sidebar-item" aria-label="解释"><!--[--><!--]--> 解释 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex27.html#附加题" class="router-link-active router-link-exact-active sidebar-item" aria-label="附加题"><!--[--><!--]--> 附加题 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><li><a href="/llthw-zh/ex28.html" class="sidebar-item" aria-label="练习 28：性能：获取性能情况，uptime，free，top"><!--[--><!--]--> 练习 28：性能：获取性能情况，uptime，free，top <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex29.html" class="sidebar-item" aria-label="练习 29：内核：内核消息，dmesg"><!--[--><!--]--> 练习 29：内核：内核消息，dmesg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex30.html" class="sidebar-item" aria-label="练习 30：打磨、洗练、重复：总复习"><!--[--><!--]--> 练习 30：打磨、洗练、重复：总复习 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/next.html" class="sidebar-item" aria-label="下一步做什么"><!--[--><!--]--> 下一步做什么 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/mdi.html" class="sidebar-item" aria-label="Debian 手动安装"><!--[--><!--]--> Debian 手动安装 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><!--]--></ul><!--[--><!--]--></aside><!--]--><!--[--><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><h1 id="练习-27-安全-shell-ssh-sshd-scp" tabindex="-1"><a class="header-anchor" href="#练习-27-安全-shell-ssh-sshd-scp" aria-hidden="true">#</a> 练习 27：安全 Shell，<code>ssh</code>，<code>sshd</code>，<code>scp</code></h1><blockquote><p>原文：<a href="https://archive.fo/vzDDW" target="_blank" rel="noopener noreferrer">Exercise 27. Networking: secure shell, ssh, sshd, scp<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>译者：<a href="https://github.com/wizardforcel" target="_blank" rel="noopener noreferrer">飞龙<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>协议：<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>自豪地采用<a href="https://translate.google.cn/" target="_blank" rel="noopener noreferrer">谷歌翻译<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><p>你可能已经知道，<a href="https://en.wikipedia.org/wiki/Secure_Shell" target="_blank" rel="noopener noreferrer">SSH<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> 是一种网络协议，允许你通过网络登录到<code>vm1</code>。让我们详细研究一下。</p><blockquote><p>安全 Shell（SSH）是一种网络协议，用于安全数据通信，远程 Shell 服务或命令执行，以及其它两个联网计算机之间的网络服务，它们通过不安全网络上的安全通道连接：服务器和客户端（运行 SSH 服务器和 SSH 客户端程序）。协议规范区分了两个主要版本，被称为 SSH-1 和 SSH-2。</p></blockquote><blockquote><p>协议最著名的应用是，访问类 Unix 操作系统上的 shell 帐户。它为替代 Telnet 和其他不安全的远程 shell 协议而设计，如 Berkeley rsh 和 rexec 协议，它们以明文形式发送信息，特别是密码，使得它们易于使用封包分析来拦截和暴露。SSH 使用的加密 旨在通过不安全的网络（如互联网）提供数据的机密性和完整性。</p></blockquote><p>重要的 SSH 程序，概念和配置文件：</p><ul><li><a href="https://en.wikipedia.org/wiki/OpenSSH" target="_blank" rel="noopener noreferrer">OpenSSH<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> - 开源的 ssh 程序实现。</li><li><code>ssh</code> - 允许你连接到 SSH 服务器的客户端程序。Putty 就是这样的客户端程序。</li><li><code>sshd</code> - 服务器程序，允许你使用<code>ssh</code>连接到它。</li><li><code>/etc/ssh/ssh_config</code> - 默认的客户端程序配置文件。</li><li><code>/etc/ssh/sshd_config</code> - 默认服务器程序配置文件。</li><li><a href="https://en.wikipedia.org/wiki/Public-key_cryptography" target="_blank" rel="noopener noreferrer">公钥密码系统<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> - 一种需要两个单独密钥的加密系统，其中一个密钥是私钥，其中一个密钥是公钥。虽然不同，密钥对的两个部分在数学上是相关的。一旦密钥锁定或加密了明文，另一个密钥解锁或解密密文。两个密钥都不能执行这两个功能。其中一个密钥是公开发布的，另一个密钥是保密的。</li><li>SSH 密钥 - SSH 使用公钥密码系统来认证远程计算机，并允许它对用户进行认证（如有必要）。任何人都可以生成一对匹配的不同密钥（公钥和私钥）。公钥放置在所有计算机上，它们允许访问匹配的私钥的所有者（所有者使私钥保密）。虽然认证基于私钥，但认证期间密钥本身不会通过网络传输。</li><li><code>/etc/ssh/moduli</code> - 质数及其生成器，由<code>sshd(8)</code>用于 Diffie-Hellman Group Exchange 密钥交换方法中。</li><li><code>/etc/ssh/ssh_host_dsa_key</code>, <code>/etc/ssh/ssh_host_rsa_key</code> - 主机 RSA 和 DSA 私钥。</li><li><code>/etc/ssh/ssh_host_dsa_key.pub</code>, <code>/etc/ssh/ssh_host_rsa_key.pub</code> - 主机 RSA 和 DSA 公钥。</li></ul><p>SSH 协议非常重要，因此被广泛使用，并且具有如此多的功能，你必须了解它的一些工作原理。这是它的一些用途：</p><ul><li><code>scp</code> - 通过 SSH 传输文件。</li><li><code>sftp</code> - 类似 ftp 的协议，用于管理远程文件。</li><li><code>sshfs</code> - SSH 上的远程文件系统。</li><li>SSH 隧道 - 一种通过安全连接，传输几乎任何数据的方法。这是非常重要的，因为它可以用于构建受保护系统的基础，以及许多其他用途。</li></ul><p>为了了解这个协议，让我们看看，在 SSH 会话中会发生了什么。为此，我们将开始研究<code>vm1</code>到<code>vm1</code>的连接的带注解的输出（是的，这是可以做到的，也是完全有效的）。概述：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>你
+    输入 SSH VM1 
+    控制权现在传递给 SSH 客户端
+SSH 客户端
+    进入明文阶段
+        读取配置
+        与 SSH 服务器进行协议协商
+    进入 SSH 传输阶段
+        与 SSH 服务器进行协商
+            数据加密密码 
+            数据完整性算法
+            数据压缩算法
+            使用 Diffie-Hellman 算法启动密钥交换
+            所得共享密钥用于建立安全连接
+    进入 SSH-userauth 阶段
+    要求你输入密码
+    控制权现在传递给你
+你
+    输入密码
+    控制权现在传递给 SSH 客户端
+SSH 客户端
+    在 SSH 服务器对你进行认证
+    进入 SSH 连接阶段
+    为你分配伪终端
+    为你启动 shell
+    控制权现在传递给你
+你
+    在 vm1 上做一些（没）有用的事情 
+    关闭 shell
+    控制全现在传递给 SSH 客户端
+SSH 客户端
+    关闭伪终端
+    关闭连接
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br></div></div><p>现在阅读这个：</p><ul><li><a href="https://www.linuxjournal.com/article/9566" target="_blank" rel="noopener noreferrer">SSH 协议揭秘<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></li><li><a href="http://www.cs.ust.hk/faculty/cding/COMP581/SLIDES/slide24.pdf" target="_blank" rel="noopener noreferrer">http://www.cs.ust.hk/faculty/cding/COMP581/SLIDES/slide24.pdf<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></li></ul><p>并研究 SSH 会话的真实输出：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ ssh -vv vm1
+ 
+Protocol version selection, plaintext
+-------------------------------------
+ 
+OpenSSH_5.5p1 Debian-6+squeeze2, OpenSSL 0.9.8o 01 Jun 2010
+# Speaks for itself, I will mark such entries with -- below
+debug1: Reading configuration data /etc/ssh/ssh_config
+# Applying default options for all hosts. Additional options for each host may be
+# specified in the configuration file
+debug1: Applying options for *
+debug2: ssh_connect: needpriv 0
+debug1: Connecting to vm1 [127.0.1.1] port 22.
+debug1: Connection established.
+debug1: identity file /home/user1/.ssh/id_rsa type -1      # no such files
+debug1: identity file /home/user1/.ssh/id_rsa-cert type -1
+debug1: identity file /home/user1/.ssh/id_dsa type -1
+debug1: identity file /home/user1/.ssh/id_dsa-cert type -1
+debug1: Remote protocol version 2.0, remote software version OpenSSH_5.5p1 Debian-6+squeeze2
+debug1: match: OpenSSH_5.5p1 Debian-6+squeeze2 pat OpenSSH*
+debug1: Enabling compatibility mode for protocol 2.0
+debug1: Local version string SSH-2.0-OpenSSH_5.5p1 Debian-6+squeeze2
+debug2: fd 3 setting O_NONBLOCK
+ 
+SSH-transport, binary packet protocol
+-------------------------------------
+ 
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+# Key exchange algorithms
+debug2: kex_parse_kexinit: diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
+# SSH host key types
+debug2: kex_parse_kexinit: ssh-rsa-cert-v00@openssh.com,ssh-dss-cert-v00@openssh.com,ssh-rsa,ssh-dss
+# Data encryption ciphers
+debug2: kex_parse_kexinit: aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour,rijndael-cbc@lysator.liu.se
+debug2: kex_parse_kexinit: aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour,rijndael-cbc@lysator.liu.se
+# Data integrity algorithms
+debug2: kex_parse_kexinit: hmac-md5,hmac-sha1,umac-64@openssh.com,hmac-ripemd160,hmac-ripemd160@openssh.com,hmac-sha1-96,hmac-md5-96
+debug2: kex_parse_kexinit: hmac-md5,hmac-sha1,umac-64@openssh.com,hmac-ripemd160,hmac-ripemd160@openssh.com,hmac-sha1-96,hmac-md5-96
+# Data compression algorithms
+debug2: kex_parse_kexinit: none,zlib@openssh.com,zlib
+debug2: kex_parse_kexinit: none,zlib@openssh.com,zlib
+debug2: kex_parse_kexinit:
+debug2: kex_parse_kexinit:
+debug2: kex_parse_kexinit: first_kex_follows
+debug2: kex_parse_kexinit: reserved 0
+# Messages back from server
+debug2: kex_parse_kexinit: diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1
+debug2: kex_parse_kexinit: ssh-rsa,ssh-dss
+debug2: kex_parse_kexinit: aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour,rijndael-cbc@lysator.liu.se
+debug2: kex_parse_kexinit: aes128-ctr,aes192-ctr,aes256-ctr,arcfour256,arcfour128,aes128-cbc,3des-cbc,blowfish-cbc,cast128-cbc,aes192-cbc,aes256-cbc,arcfour,rijndael-cbc@lysator.liu.se
+debug2: kex_parse_kexinit: hmac-md5,hmac-sha1,umac-64@openssh.com,hmac-ripemd160,hmac-ripemd160@openssh.com,hmac-sha1-96,hmac-md5-96
+debug2: kex_parse_kexinit: hmac-md5,hmac-sha1,umac-64@openssh.com,hmac-ripemd160,hmac-ripemd160@openssh.com,hmac-sha1-96,hmac-md5-96
+debug2: kex_parse_kexinit: none,zlib@openssh.com
+debug2: kex_parse_kexinit: none,zlib@openssh.com
+debug2: kex_parse_kexinit:
+debug2: kex_parse_kexinit:
+debug2: kex_parse_kexinit: first_kex_follows 0
+debug2: kex_parse_kexinit: reserved 0
+# Message authentication code setup
+debug2: mac_setup: found hmac-md5
+debug1: kex: server-&gt;client aes128-ctr hmac-md5 none
+debug2: mac_setup: found hmac-md5
+debug1: kex: client-&gt;server aes128-ctr hmac-md5 none
+# Key exchange
+debug1: SSH2_MSG_KEX_DH_GEX_REQUEST(1024&lt;1024&lt;8192) sent
+debug1: SSH2_MSG_KEX_DH_GEX_REQUEST(1024&lt;1024&lt;8192) sent
+debug1: expecting SSH2_MSG_KEX_DH_GEX_GROUP
+debug2: dh_gen_key: priv key bits set: 135/256
+debug2: bits set: 498/1024
+debug1: SSH2_MSG_KEX_DH_GEX_INIT sent
+debug1: expecting SSH2_MSG_KEX_DH_GEX_REPLY
+# Server authentication. vm1 host key is not known because it is our first connection
+debug2: no key of type 0 for host vm1
+debug2: no key of type 2 for host vm1
+# Confirmation of host key acceptance
+The authenticity of host &#39;vm1 &#39;(127.0.1.1)&#39; can&#39;t be established.
+RSA key fingerprint is b6:06:92:5e:04:49:d9:e8:57:90:61:1b:16:87:bb:09.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added &#39;vm1&#39; (RSA) to the list of known hosts.
+# Key is added to /home/user1/.ssh/known_hosts and checked
+debug2: bits set: 499/1024
+debug1: ssh_rsa_verify: signature correct
+# Based on shared master key, data encryption key and data integrity key are derived
+debug2: kex_derive_keys
+debug2: set_newkeys: mode 1
+# Information about this is sent to server
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: expecting SSH2_MSG_NEWKEYS
+debug2: set_newkeys: mode 0
+debug1: SSH2_MSG_NEWKEYS received
+# IP roaming not enabled? Not sure about this.
+debug1: Roaming not allowed by server
+ 
+SSH-userauth
+------------
+ 
+debug1: SSH2_MSG_SERVICE_REQUEST sent
+debug2: service_accept: ssh-userauth
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+debug2: key: /home/user1/.ssh/id_rsa ((nil))
+debug2: key: /home/user1/.ssh/id_dsa ((nil))
+debug1: Authentications that can continue: publickey,password
+debug1: Next authentication method: publickey
+debug1: Trying private key: /home/user1/.ssh/id_rsa
+debug1: Trying private key: /home/user1/.ssh/id_dsa
+debug2: we did not send a packet, disable method
+debug1: Next authentication method: password
+user1@vm1&#39;&#39;s password:
+debug2: we sent a password packet, wait for reply
+debug1: Authentication succeeded (password).
+ 
+SSH-connection
+--------------
+ 
+debug1: channel 0: new [client-session]
+debug2: channel 0: send open
+# Disable SSH mutiplexing.
+# More info: http://www.linuxjournal.com/content/speed-multiple-ssh-connections-same-server
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug2: callback start
+debug2: client_session2_setup: id 0
+debug2: channel 0: request pty-req confirm 1
+# Sending environment variables
+debug1: Sending environment.
+debug1: Sending env LANG = en_US.UTF-8
+debug2: channel 0: request env confirm 0
+debug2: channel 0: request shell confirm 1
+# Set TCP_NODELAY flag: http://en.wikipedia.org/wiki/Nagle%27s_algorithm
+debug2: fd 3 setting TCP_NODELAY
+debug2: callback done
+# Connection opened
+debug2: channel 0: open confirm rwindow 0 rmax 32768
+debug2: channel_input_status_confirm: type 99 id 0
+# Pseudo terminal allocation
+debug2: PTY allocation request accepted on channel 0
+debug2: channel 0: rcvd adjust 2097152
+debug2: channel_input_status_confirm: type 99 id 0
+# Shell is started
+debug2: shell request accepted on channel 0
+# Loggin in is completed
+Linux vm1 2.6.32-5-amd64 #1 SMP Sun May 6 04:00:17 UTC 2012 x86_64
+ 
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+ 
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+You have mail.
+Last login: Thu Jul 19 05:14:40 2012 from 10.0.2.2
+user1@vm1:~$ debug2: client_check_window_change: changed
+debug2: channel 0: request window-change confirm 0
+user1@vm1:~$ debug2: client_check_window_change: changed
+debug2: channel 0: request window-change confirm 0
+user1@vm1:~$ logout
+ 
+Ending ssh connection
+---------------------
+ 
+debug2: channel 0: rcvd eof   # end of file
+debug2: channel 0: output open -&gt; drain
+debug2: channel 0: obuf empty
+debug2: channel 0: close_write
+debug2: channel 0: output drain -&gt; closed
+debug1: client_input_channel_req: channel 0 rtype exit-status reply 0
+# signalling that channels are half-closed for writing, through a channel protocol extension
+# notification &quot;eow@openssh.com&quot; http://www.openssh.com/txt/release-5.1
+debug1: client_input_channel_req: channel 0 rtype eow@openssh.com reply 0
+debug2: channel 0: rcvd eow
+# Ending connection
+debug2: channel 0: close_read
+debug2: channel 0: input open -&gt; closed
+debug2: channel 0: rcvd close
+debug2: channel 0: almost dead
+debug2: channel 0: gc: notify user
+debug2: channel 0: gc: user detached
+debug2: channel 0: send close
+debug2: channel 0: is dead
+debug2: channel 0: garbage collecting
+debug1: channel 0: free: client-session, nchannels 1
+Connection to vm1 closed.
+Transferred: sent 1928, received 2632 bytes, in 93.2 seconds
+Bytes per second: sent 20.7, received 28.2
+debug1: Exit status 0
+user1@vm1:~$
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br><span class="line-number">138</span><br><span class="line-number">139</span><br><span class="line-number">140</span><br><span class="line-number">141</span><br><span class="line-number">142</span><br><span class="line-number">143</span><br><span class="line-number">144</span><br><span class="line-number">145</span><br><span class="line-number">146</span><br><span class="line-number">147</span><br><span class="line-number">148</span><br><span class="line-number">149</span><br><span class="line-number">150</span><br><span class="line-number">151</span><br><span class="line-number">152</span><br><span class="line-number">153</span><br><span class="line-number">154</span><br><span class="line-number">155</span><br><span class="line-number">156</span><br><span class="line-number">157</span><br><span class="line-number">158</span><br><span class="line-number">159</span><br><span class="line-number">160</span><br><span class="line-number">161</span><br><span class="line-number">162</span><br><span class="line-number">163</span><br><span class="line-number">164</span><br><span class="line-number">165</span><br><span class="line-number">166</span><br><span class="line-number">167</span><br><span class="line-number">168</span><br><span class="line-number">169</span><br><span class="line-number">170</span><br><span class="line-number">171</span><br><span class="line-number">172</span><br><span class="line-number">173</span><br><span class="line-number">174</span><br><span class="line-number">175</span><br><span class="line-number">176</span><br><span class="line-number">177</span><br><span class="line-number">178</span><br><span class="line-number">179</span><br><span class="line-number">180</span><br><span class="line-number">181</span><br><span class="line-number">182</span><br><span class="line-number">183</span><br><span class="line-number">184</span><br><span class="line-number">185</span><br><span class="line-number">186</span><br><span class="line-number">187</span><br></div></div><p>现在，你将学习如何在调试模式下启动<code>sshd</code>，使用<code>scp</code>建立公钥认证和复制文件。</p><h2 id="这样做" tabindex="-1"><a class="header-anchor" href="#这样做" aria-hidden="true">#</a> 这样做</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code> 1: mkdir -v ssh_test
+ 2: cd ssh_test
+ 3: cp -v /etc/ssh/sshd_config .
+ 4: sed -i&#39;.bak&#39; &#39;s/^Port 22$/Port 1024/&#39; sshd_config
+ 5: sed -i &#39;s/^HostKey \/etc\/ssh\/ssh_host_rsa_key$/Hostkey \/home\/user1\/ssh_test\/ssh_host_rsa_key/&#39; sshd_config
+ 6: sed -i &#39;s/^HostKey \/etc\/ssh\/ssh_host_dsa_key$/Hostkey \/home\/user1\/ssh_test\/ssh_host_dsa_key/&#39; sshd_config
+ 7: diff sshd_config.bak sshd_config
+ 8: ssh-keygen -b 4096 -t rsa -N &#39;&#39; -v -h -f ssh_host_rsa_key
+ 9: ssh-keygen -b 1024 -t dsa -N &#39;&#39; -v -h -f ssh_host_dsa_key
+10: ssh-keygen -b 4096 -t rsa -N &#39;&#39; -v  -f ~/.ssh/id_rsa
+11: cat ~/.ssh/id_rsa.pub &gt; ~/.ssh/authorized_keys
+12: /usr/sbin/sshd -Ddf sshd_config &gt; sshd.out 2&gt;&amp;1 &amp;
+13: ssh-keyscan -H vm1 127.0.0.1 &gt;&gt; ~/.ssh/known_hosts
+14: /usr/sbin/sshd -Ddf sshd_config &gt;&gt; sshd.out 2&gt;&amp;1 &amp;
+15: ssh vm1 -v -p 1024 2&gt;ssh.out
+16: ps au --forest
+17: logout
+18: /usr/sbin/sshd -Ddf sshd_config &gt;&gt; sshd.out 2&gt;&amp;1 &amp;
+19: scp -v -P 1024 vm1:.bashrc . 2&gt;scp.out
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br></div></div><h2 id="你会看到什么" tabindex="-1"><a class="header-anchor" href="#你会看到什么" aria-hidden="true">#</a> 你会看到什么</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:~$ mkdir -v ssh_test
+mkdir: created directory &#39;ssh_test&#39;
+user1@vm1:~$ cd ssh_test
+user1@vm1:~/ssh_test$ cp -v /etc/ssh/sshd_config .
+&#39;/etc/ssh/sshd_config&#39; -&gt; &#39;./sshd_config&#39;
+user1@vm1:~/ssh_test$ sed -i&#39;.bak&#39; &#39;s/^Port 22$/Port 1024/&#39; sshd_config
+user1@vm1:~/ssh_test$ sed -i &#39;s/^HostKey \/etc\/ssh\/ssh_host_rsa_key$/Hostkey \/home\/user1\/ssh_test\/ssh_host_rsa_key/&#39; sshd_config
+user1@vm1:~/ssh_test$ sed -i &#39;s/^HostKey \/etc\/ssh\/ssh_host_dsa_key$/Hostkey \/home\/user1\/ssh_test\/ssh_host_dsa_key/&#39; sshd_config
+user1@vm1:~/ssh_test$ diff sshd_config.bak sshd_config
+5c5
+&lt; Port 22
+---
+&gt; Port 1024
+11,12c11,12
+&lt; HostKey /etc/ssh/ssh_host_rsa_key
+&lt; HostKey /etc/ssh/ssh_host_dsa_key
+---
+&gt; Hostkey /home/user1/ssh_test/ssh_host_rsa_key
+&gt; Hostkey /home/user1/ssh_test/ssh_host_dsa_key
+user1@vm1:~/ssh_test$ ssh-keygen -b 4096 -t rsa -N &#39;&#39; -v -h -f ssh_host_rsa_key
+Generating public/private rsa key pair.
+Your identification has been saved in ssh_host_rsa_key.
+Your public key has been saved in ssh_host_rsa_key.pub.
+The key fingerprint is:
+8c:0a:8d:ae:c7:34:e6:29:9c:c2:14:29:b8:d9:1d:34 user1@vm1
+&#39;The key&#39;s randomart image is:
++--[ RSA 4096]----+
+|                 |
+|    E            |
+|. .. .           |
+|oo o.  o         |
+|.++.... S        |
+|oo=...           |
+|+=oo.            |
+|o==              |
+|oo               |
++-----------------+
+user1@vm1:~/ssh_test$ ssh-keygen -b 1024 -t dsa -N &#39;&#39; -v -h -f ssh_host_dsa_key
+Generating public/private dsa key pair.
+Your identification has been saved in ssh_host_dsa_key.
+Your public key has been saved in ssh_host_dsa_key.pub.
+The key fingerprint is:
+cd:6b:2a:a2:ba:80:65:71:85:ef:2e:6a:c0:a7:d9:aa user1@vm1
+&#39;The key&#39;s randomart image is:
++--[ DSA 1024]----+
+|     ..          |
+|    ..           |
+|  . ..           |
+|   o  .  o       |
+|. o  .  S o      |
+|o+ .  .    .     |
+|o.=  .    o      |
+|.o..o o  o       |
+|E=+o o ..        |
++-----------------+
+user1@vm1:~/ssh_test$ ssh-keygen -b 4096  -t rsa -N &#39;&#39; -v  -f ~/.ssh/id_rsa
+Generating public/private rsa key pair.
+Your identification has been saved in /home/user1/.ssh/id_rsa.
+Your public key has been saved in /home/user1/.ssh/id_rsa.pub.
+The key fingerprint is:
+50:65:18:61:3f:41:36:07:4f:40:36:a7:4b:6d:64:28 user1@vm1
+&#39;The key&#39;s randomart image is:
++--[ RSA 4096]----+
+|        =B&amp;+*    |
+|       oE=.&amp;     |
+|      .  .= +    |
+|       . . +     |
+|        S .      |
+|                 |
+|                 |
+|                 |
+|                 |
++-----------------+
+user1@vm1:~/ssh_test$ cat ~/.ssh/id_rsa.pub &gt; ~/.ssh/authorized_keys
+user1@vm1:~/ssh_test$ /usr/sbin/sshd -Ddf sshd_config &gt; sshd.out 2&gt;&amp;1 &amp;
+[2] 26896
+user1@vm1:~/ssh_test$ ssh-keyscan -H vm1 127.0.0.1 &gt;&gt; ~/.ssh/known_hosts
+# 127.0.0.1 SSH-2.0-OpenSSH_5.5p1 Debian-6+squeeze2
+# vm1 SSH-2.0-OpenSSH_5.5p1 Debian-6+squeeze2
+[2]+  Exit 255                /usr/sbin/sshd -Ddf sshd_config &gt; sshd.out 2&gt;&amp;1
+user1@vm1:~/ssh_test$ /usr/sbin/sshd -Ddf sshd_config &gt;&gt; sshd.out 2&gt;&amp;1 &amp;
+[1] 26957
+user1@vm1:~/ssh_test$ ssh vm1 -v -p 1024 2&gt;ssh.out
+Linux vm1 2.6.32-5-amd64 #1 SMP Sun May 6 04:00:17 UTC 2012 x86_64
+ 
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+ 
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+You have mail.
+Last login: Fri Jul 20 09:10:30 2012 from vm1.site
+Environment:
+  LANG=en_US.UTF-8
+  USER=user1
+  LOGNAME=user1
+  HOME=/home/user1
+  PATH=/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games
+  MAIL=/var/mail/user1
+  SHELL=/bin/bash
+  SSH_CLIENT=127.0.1.1 47456 1024
+  SSH_CONNECTION=127.0.1.1 47456 127.0.1.1 1024
+  SSH_TTY=/dev/pts/0
+  TERM=xterm
+user1@vm1:~$ ps au --forest
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+user1    26224  0.0  1.2  23660  6576 pts/2    Ss   09:09   0:01 -bash
+user1    27020  1.0  0.6  68392  3236 pts/2    S    09:50   0:00  \_ sshd: user1 [priv]
+user1    27025  0.0  0.2  68392  1412 pts/2    S    09:50   0:00  |   \_ sshd: user1@pts/0
+user1    27026  9.0  1.2  23564  6404 pts/0    Ss   09:50   0:00  |       \_ -bash
+user1    27051  0.0  0.2  16308  1060 pts/0    R+   09:50   0:00  |           \_ ps au --forest
+user1    27021  1.1  0.5  38504  2880 pts/2    S+   09:50   0:00  \_ ssh vm1 -v -p 1024
+root      1107  0.0  0.1   5932   620 tty6     Ss+  Jul18   0:00 /sbin/getty 38400 tty6
+root      1106  0.0  0.1   5932   616 tty5     Ss+  Jul18   0:00 /sbin/getty 38400 tty5
+root      1105  0.0  0.1   5932   620 tty4     Ss+  Jul18   0:00 /sbin/getty 38400 tty4
+root      1104  0.0  0.1   5932   620 tty3     Ss+  Jul18   0:00 /sbin/getty 38400 tty3
+root      1103  0.0  0.1   5932   616 tty2     Ss+  Jul18   0:00 /sbin/getty 38400 tty2
+root      1102  0.0  0.1   5932   616 tty1     Ss+  Jul18   0:00 /sbin/getty 38400 tty1
+user1@vm1:~$ logout
+user1@vm1:~/ssh_test$
+[1]+  Exit 255                /usr/sbin/sshd -Ddf sshd_config &gt; sshd.out 2&gt;&amp;1
+user1@vm1:~/ssh_test$ /usr/sbin/sshd -Ddf sshd_config &gt;&gt; sshd.out 2&gt;&amp;1 &amp;
+[1] 27067
+user1@vm1:~/ssh_test$ scp -v -P 1024 vm1:.bashrc . 2&gt;scp.out
+Environment:
+  LANG=en_US.UTF-8
+  USER=user1
+  LOGNAME=user1
+  HOME=/home/user1
+  PATH=/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games
+  MAIL=/var/mail/user1
+  SHELL=/bin/bash
+  SSH_CLIENT=127.0.1.1 47459 1024
+  SSH_CONNECTION=127.0.1.1 47459 127.0.1.1 1024
+.bashrc                                                                                                                     100% 3184     3.1KB/s   00:00
+[1]+  Exit 255                /usr/sbin/sshd -Ddf sshd_config &gt;&gt; sshd.out 2&gt;&amp;1
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br><span class="line-number">124</span><br><span class="line-number">125</span><br><span class="line-number">126</span><br><span class="line-number">127</span><br><span class="line-number">128</span><br><span class="line-number">129</span><br><span class="line-number">130</span><br><span class="line-number">131</span><br><span class="line-number">132</span><br><span class="line-number">133</span><br><span class="line-number">134</span><br><span class="line-number">135</span><br><span class="line-number">136</span><br><span class="line-number">137</span><br></div></div><h2 id="解释" tabindex="-1"><a class="header-anchor" href="#解释" aria-hidden="true">#</a> 解释</h2><ol><li>创建<code>/home/user1/ssh_test</code>目录。</li><li>使其成为当前工作目录。</li><li>将<code>sshd_config</code>复制到此目录。</li><li>将<code>sshd</code>监听端口从 22 更改为 1024，将副本命名为<code>sshd_config.bak</code>。</li><li>替换 RSA 主机密钥位置。</li><li>替换 DSA 主机密钥位置。</li><li>显示<code>sshd_config</code>的旧版本和新版本之间的差异。</li><li>生成具有空密码的，新的 4096 位 RSA 主机密钥对，将其保存到<code>/home/user1/ssh_test/ssh_host_rsa_key</code>和<code>/home/user1/ssh_test/ssh_host_rsa_key.pub</code>。</li><li>同样的，但是对 DSA 密钥执行。</li><li>生成新的认证密钥对，将其保存到<code>/home/user1/.ssh/id_rsa</code>和<code>/home/user1/.ssh/id_rsa.pub</code>。</li><li>将<code>id_rsa.pub</code>复制到<code>/home/user1/.ssh/authorized_keys</code>，来允许无密码认证。</li><li>在调试模式下，在端口 1024 上启动新的 SSH 服务器，将所有输出保存到<code>sshd.log</code>。</li><li>提取 SSH 客户端的主机认证密钥，并将其提供给<code>/home/user1/.ssh/known_hosts</code>。</li><li>在调试模式下，在端口 1024 上启动新的 SSH 服务器，将所有输出附加到<code>sshd.log</code>。这是因为在调试模式下， SSH 服务器只维护一个连接。</li><li>使用<code>ssh</code>客户端连接到此服务器。</li><li>以树形式打印当前正在运行的进程。你可以看到，你正在使用<code>sshd</code>启动的 bash，它服务于你的连接，而<code>sshd</code>又是由<code>sshd</code>启动，你在几行之前启动了你自己。。</li><li>退出<code>ssh</code>会话。</li><li>再次启动 SSH 服务器。</li><li>将文件<code>.bashrc</code>从你的主目录复制到当前目录。</li></ol><h2 id="附加题" tabindex="-1"><a class="header-anchor" href="#附加题" aria-hidden="true">#</a> 附加题</h2><p>观看此视频，它解释了加密如何工作：<a href="http://www.youtube.com/watch?v=3QnD2c4Xovk" target="_blank" rel="noopener noreferrer">http://www.youtube.com/watch?v=3QnD2c4Xovk<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> 阅读：<a href="http://docstore.mik.ua/orelly/networking_2ndEd/ssh/ch03_04.htm" target="_blank" rel="noopener noreferrer">http://docstore.mik.ua/orelly/networking_2ndEd/ssh/ch03_04.htm<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a> 阅读文件<code>ssh.out</code>，<code>scp.out</code>和<code>sshd.out</code>中的调试输出。向你自己解释发生了什么。</p><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">上次更新: </span><!----></div><div class="meta-item contributors"><span class="meta-item-label">贡献者: </span><span class="meta-item-info"><!--[--><!--[--><span class="contributor" title="email: yzqdev@outlook.com">yzqdev</span><!----><!--]--><!--]--></span></div></footer><nav class="page-nav"><p class="inner"><span class="prev"><a href="/llthw-zh/ex26.html" class="" aria-label="练习 26：网络：封包过滤配置，iptables"><!--[--><!--]--> 练习 26：网络：封包过滤配置，iptables <!--[--><!--]--></a></span><span class="next"><a href="/llthw-zh/ex28.html" class="" aria-label="练习 28：性能：获取性能情况，uptime，free，top"><!--[--><!--]--> 练习 28：性能：获取性能情况，uptime，free，top <!--[--><!--]--></a></span></p></nav><!--[--><!--]--></main><!--]--></div><!----><!--]--></div>
+    <script type="module" src="/llthw-zh/assets/app.91d0dc40.js" defer></script>
+  </body>
+</html>

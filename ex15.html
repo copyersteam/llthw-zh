@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="generator" content="VuePress 2.0.0-beta.35">
+    <style>
+      :root {
+        --c-bg: #fff;
+      }
+      html.dark {
+        --c-bg: #22272e;
+      }
+      html, body {
+        background-color: var(--c-bg);
+      }
+    </style>
+    <script>
+      const userMode = localStorage.getItem('vuepress-color-scheme');
+			const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+			if (userMode === 'dark' || (userMode !== 'light' && systemDarkMode)) {
+				document.documentElement.classList.toggle('dark', true);
+			}
+    </script>
+    <title>练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d | VuePress</title><meta name="description" content="Vue 驱动的静态网站生成器">
+    <link rel="modulepreload" href="/llthw-zh/assets/app.91d0dc40.js"><link rel="modulepreload" href="/llthw-zh/assets/ex15.html.c3ca26bc.js"><link rel="modulepreload" href="/llthw-zh/assets/ex15.html.1903e6e4.js">
+    <link rel="stylesheet" href="/llthw-zh/assets/style.640a10cb.css">
+  </head>
+  <body>
+    <div id="app"><!--[--><div class="theme-container"><!--[--><header ref_key="navbar" class="navbar"><div class="toggle-sidebar-button" title="切换侧边栏" aria-expanded="false" role="button" tabindex="0"><div class="icon" aria-hidden="true"><span></span><span></span><span></span></div></div><span><a href="/llthw-zh/" class=""><!----><span class="site-name">VuePress</span></a></span><div class="navbar-items-wrapper" style=""><!--[--><!--]--><!----><!--[--><!--]--><button class="toggle-dark-button" title="切换夜间模式"><svg style="" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M16 12.005a4 4 0 1 1-4 4a4.005 4.005 0 0 1 4-4m0-2a6 6 0 1 0 6 6a6 6 0 0 0-6-6z" fill="currentColor"></path><path d="M5.394 6.813l1.414-1.415l3.506 3.506L8.9 10.318z" fill="currentColor"></path><path d="M2 15.005h5v2H2z" fill="currentColor"></path><path d="M5.394 25.197L8.9 21.691l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 25.005h2v5h-2z" fill="currentColor"></path><path d="M21.687 23.106l1.414-1.415l3.506 3.506l-1.414 1.414z" fill="currentColor"></path><path d="M25 15.005h5v2h-5z" fill="currentColor"></path><path d="M21.687 8.904l3.506-3.506l1.414 1.415l-3.506 3.505z" fill="currentColor"></path><path d="M15 2.005h2v5h-2z" fill="currentColor"></path></svg><svg style="display:none;" class="icon" focusable="false" viewBox="0 0 32 32"><path d="M13.502 5.414a15.075 15.075 0 0 0 11.594 18.194a11.113 11.113 0 0 1-7.975 3.39c-.138 0-.278.005-.418 0a11.094 11.094 0 0 1-3.2-21.584M14.98 3a1.002 1.002 0 0 0-.175.016a13.096 13.096 0 0 0 1.825 25.981c.164.006.328 0 .49 0a13.072 13.072 0 0 0 10.703-5.555a1.01 1.01 0 0 0-.783-1.565A13.08 13.08 0 0 1 15.89 4.38A1.015 1.015 0 0 0 14.98 3z" fill="currentColor"></path></svg></button><form class="search-box" role="search"><input type="search" placeholder="搜索文档" autocomplete="off" spellcheck="false" value><!----></form></div></header><!--]--><div class="sidebar-mask"></div><!--[--><aside class="sidebar"><!----><!--[--><!--]--><ul class="sidebar-items"><!--[--><li><p tabindex="0" class="sidebar-item sidebar-heading active">教程 <!----></p><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a href="/llthw-zh/intro.html" class="sidebar-item" aria-label="引言"><!--[--><!--]--> 引言 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex0.html" class="sidebar-item" aria-label="练习 0：起步"><!--[--><!--]--> 练习 0：起步 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex1.html" class="sidebar-item" aria-label="练习 1：文本编辑器，vim"><!--[--><!--]--> 练习 1：文本编辑器，vim <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex2.html" class="sidebar-item" aria-label="练习 2：文本浏览器，少即是多"><!--[--><!--]--> 练习 2：文本浏览器，少即是多 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex3.html" class="sidebar-item" aria-label="练习 3：Bash：Shell、.profile、.bashrc、.bash_history。"><!--[--><!--]--> 练习 3：Bash：Shell、.profile、.bashrc、.bash_history。 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex4.html" class="sidebar-item" aria-label="练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch"><!--[--><!--]--> 练习 4：Bash：处理文件，pwd，ls，cp，mv，rm，touch <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex5.html" class="sidebar-item" aria-label="练习 5：Bash：环境变量，env，set，export"><!--[--><!--]--> 练习 5：Bash：环境变量，env，set，export <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex6.html" class="sidebar-item" aria-label="练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales"><!--[--><!--]--> 练习 6：Bash：语言设置，LANG，locale，dpkg-reconfigure locales <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex7.html" class="sidebar-item" aria-label="练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv"><!--[--><!--]--> 练习 7：Bash：重定向，stdin，stdout，stderr，&lt;，&gt;，&gt;&gt;，|，tee，pv <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex8.html" class="sidebar-item" aria-label="练习 8：更多的重定向和过滤：head，tail，awk，grep，sed"><!--[--><!--]--> 练习 8：更多的重定向和过滤：head，tail，awk，grep，sed <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex9.html" class="sidebar-item" aria-label="练习 9：Bash：任务控制，jobs，fg"><!--[--><!--]--> 练习 9：Bash：任务控制，jobs，fg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex10.html" class="sidebar-item" aria-label="练习 10：Bash：程序退出代码（返回状态）"><!--[--><!--]--> 练习 10：Bash：程序退出代码（返回状态） <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex11.html" class="sidebar-item" aria-label="练习 11：总结"><!--[--><!--]--> 练习 11：总结 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex12.html" class="sidebar-item" aria-label="练习 12：文档：man，info"><!--[--><!--]--> 练习 12：文档：man，info <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex13.html" class="sidebar-item" aria-label="练习 13：文档：Google"><!--[--><!--]--> 练习 13：文档：Google <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex14.html" class="sidebar-item" aria-label="练习 14：包管理：Debian 包管理工具aptitude"><!--[--><!--]--> 练习 14：包管理：Debian 包管理工具aptitude <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex15.html" class="router-link-active router-link-exact-active router-link-active sidebar-item active" aria-label="练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d"><!--[--><!--]--> 练习 15：系统启动：运行级别，/etc/init.d，rcconf，update-rc.d <!--[--><!--]--></a><!--[--><ul style="" class="sidebar-item-children"><!--[--><li><a aria-current="page" href="/llthw-zh/ex15.html#这样做" class="router-link-active router-link-exact-active sidebar-item" aria-label="这样做"><!--[--><!--]--> 这样做 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex15.html#你会看到什么" class="router-link-active router-link-exact-active sidebar-item" aria-label="你会看到什么"><!--[--><!--]--> 你会看到什么 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex15.html#解释" class="router-link-active router-link-exact-active sidebar-item" aria-label="解释"><!--[--><!--]--> 解释 <!--[--><!--]--></a><!----></li><li><a aria-current="page" href="/llthw-zh/ex15.html#附加题" class="router-link-active router-link-exact-active sidebar-item" aria-label="附加题"><!--[--><!--]--> 附加题 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><li><a href="/llthw-zh/ex16.html" class="sidebar-item" aria-label="练习 16：处理进程，ps，kill"><!--[--><!--]--> 练习 16：处理进程，ps，kill <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex17.html" class="sidebar-item" aria-label="练习 17：任务调度：cron，at"><!--[--><!--]--> 练习 17：任务调度：cron，at <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex18.html" class="sidebar-item" aria-label="练习 18：日志：/var/log，rsyslog，logger"><!--[--><!--]--> 练习 18：日志：/var/log，rsyslog，logger <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex19.html" class="sidebar-item" aria-label="练习 19：文件系统：挂载，mount，/etc/fstab"><!--[--><!--]--> 练习 19：文件系统：挂载，mount，/etc/fstab <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex20.html" class="sidebar-item" aria-label="练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs"><!--[--><!--]--> 练习 20：文件系统：修改和创建文件系统，tune2fs，mkfs <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex21.html" class="sidebar-item" aria-label="练习 21：文件系统：修改根目录，chroot"><!--[--><!--]--> 练习 21：文件系统：修改根目录，chroot <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex22.html" class="sidebar-item" aria-label="练习 22：文件系统：移动数据，tar，dd"><!--[--><!--]--> 练习 22：文件系统：移动数据，tar，dd <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex23.html" class="sidebar-item" aria-label="练习 23：文件系统：权限，chown，chmod，umask"><!--[--><!--]--> 练习 23：文件系统：权限，chown，chmod，umask <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex24.html" class="sidebar-item" aria-label="练习 24：接口配置，ifconfig，netstat，iproute2，ss，route"><!--[--><!--]--> 练习 24：接口配置，ifconfig，netstat，iproute2，ss，route <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex25.html" class="sidebar-item" aria-label="练习 25：网络：配置文件，/etc/network/interfaces"><!--[--><!--]--> 练习 25：网络：配置文件，/etc/network/interfaces <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex26.html" class="sidebar-item" aria-label="练习 26：网络：封包过滤配置，iptables"><!--[--><!--]--> 练习 26：网络：封包过滤配置，iptables <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex27.html" class="sidebar-item" aria-label="练习 27：安全 Shell，ssh，sshd，scp"><!--[--><!--]--> 练习 27：安全 Shell，ssh，sshd，scp <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex28.html" class="sidebar-item" aria-label="练习 28：性能：获取性能情况，uptime，free，top"><!--[--><!--]--> 练习 28：性能：获取性能情况，uptime，free，top <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex29.html" class="sidebar-item" aria-label="练习 29：内核：内核消息，dmesg"><!--[--><!--]--> 练习 29：内核：内核消息，dmesg <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/ex30.html" class="sidebar-item" aria-label="练习 30：打磨、洗练、重复：总复习"><!--[--><!--]--> 练习 30：打磨、洗练、重复：总复习 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/next.html" class="sidebar-item" aria-label="下一步做什么"><!--[--><!--]--> 下一步做什么 <!--[--><!--]--></a><!----></li><li><a href="/llthw-zh/mdi.html" class="sidebar-item" aria-label="Debian 手动安装"><!--[--><!--]--> Debian 手动安装 <!--[--><!--]--></a><!----></li><!--]--></ul><!--]--></li><!--]--></ul><!--[--><!--]--></aside><!--]--><!--[--><main class="page"><!--[--><!--]--><div class="theme-default-content"><!--[--><h1 id="练习-15-系统启动-运行级别-etc-init-d-rcconf-update-rc-d" tabindex="-1"><a class="header-anchor" href="#练习-15-系统启动-运行级别-etc-init-d-rcconf-update-rc-d" aria-hidden="true">#</a> 练习 15：系统启动：运行级别，<code>/etc/init.d</code>，<code>rcconf</code>，<code>update-rc.d</code></h1><blockquote><p>原文：<a href="https://archive.fo/kQr60" target="_blank" rel="noopener noreferrer">Exercise 15. System boot: runlevels, /etc/init.d, rcconf, update-rc.d<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>译者：<a href="https://github.com/wizardforcel" target="_blank" rel="noopener noreferrer">飞龙<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>协议：<a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><blockquote><p>自豪地采用<a href="https://translate.google.cn/" target="_blank" rel="noopener noreferrer">谷歌翻译<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></p></blockquote><p>首先我会给出一个典型的系统启动过程的概述：</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>你
+    按电源开关（或启动虚拟机）
+    现在计算机获得控制权
+    控制权传给了 BIOS
+BIOS
+    执行硬件特定的任务
+    执行开机自检（POST），测试你的硬件
+    检测安装的硬件，如硬盘，内存类型和数量，...
+    通过将初始值写入其内存来初始化硬件
+    找到一个启动设备，通常是一个硬盘
+    读取并执行位于此磁盘开头的 MBR（主引导记录）
+    控制权现在传给了 MBR
+MBR
+    MBR 寻找并执行 GRUB（多重操作系统启动管理器）
+    控制权现在传给了 GRUB
+GRUB
+    查找可用的文件系统
+    查找并读取其配置文件，来了解：
+        系统位于哪里
+        启动什么系统
+        执行什么其他的操作
+    执行 Linux 内核，Linux 操作系统的主要部分
+    控制权现在传给了 Linux 内核
+Linux 内核
+    查找并加载 initrd，这是初始的 ram 磁盘
+        initrd 包含必要驱动程序，允许真实文件系统的访问和挂载
+    挂载文件系统，它在 GRUB 配置文件中指定。
+    执行`/sbin/init`，一个启动所有其他程序的特殊程序
+    控制权现在传给了 init
+init
+    查看`etc/inittab`来确定所需的运行级别
+    加载适合此运行级别的所有程序
+        加载来自`/etc/rc.d/rc2.d/`的所有程序，因为 2 是默认的 Debian 运行级别
+        启动 SSH 和 TTY，以便你可以连接到你的计算机
+    启动现在完成了
+你
+    使用 SSH 连接到你的计算机
+    SSH 守护进程为你执行 bash shell
+    你现在可以输入东西
+    你再次获得控制权
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br></div></div><p>现在我们只对“init”和“运行级别”阶段感兴趣，所以我将总结一下，系统如何启动并自动启动一些程序。首先，有一些术语​​：</p><ul><li>守护进程 - 一直运行在后台的程序。这意味着它不在乎你是否登录系统，通常你不需要手动启动它，因为它在计算机启动时自动启动。</li><li>运行级别 - 系统运行模式。基本上，这只是一个数字，提供给<code>init</code>程序，它知道哪些守护程序与每个数字相关联，并根据需要启动并停止这些守护程序。</li></ul><p>在 Debian 中有以下运行级别：</p><table><thead><tr><th>ID</th><th>描述</th></tr></thead><tbody><tr><td>S</td><td>系统通电后会执行它</td></tr><tr><td>0</td><td>停止，这定义了当系统关闭时执行哪些操作。</td></tr><tr><td>1</td><td>单用户模式，这是一种特殊的故障排除模式。在这种模式下，大多数守护进程不会自动启动。</td></tr><tr><td>2~5</td><td>完全多用户，配置的守护程序在此模式下启动。</td></tr><tr><td>6</td><td>重启，类似停止，但不是关闭系统而是重新启动。</td></tr></tbody></table><p>但是<code>init</code>怎么知道的？好吧，这是用于它的特殊目录。</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:/etc$ find /etc -type d -name &#39;rc*&#39; 2&gt;/dev/null | sort
+/etc/rc0.d
+/etc/rc1.d
+/etc/rc2.d
+/etc/rc3.d
+/etc/rc4.d
+/etc/rc5.d
+/etc/rc6.d
+/etc/rcS.d
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br></div></div><p>你可能能猜到，每个数字和<code>S</code>对应表中的运行级别。让我们列出其中一个目录，它在正常启动中启动所有所需的守护进程。</p><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:/etc$ ls -al /etc/rc2.d | awk &#39;{printf &quot;%-15.15s %-3.3s %s\n&quot;,$9,$10,$11}&#39;
+.
+..
+README
+S14portmap      -&gt;  ../init.d/portmap
+S15nfs-common   -&gt;  ../init.d/nfs-common
+S17rsyslog      -&gt;  ../init.d/rsyslog
+S17sudo         -&gt;  ../init.d/sudo
+S18acpid        -&gt;  ../init.d/acpid
+S18atd          -&gt;  ../init.d/atd
+S18cron         -&gt;  ../init.d/cron
+S18exim4        -&gt;  ../init.d/exim4
+S18ssh          -&gt;  ../init.d/ssh
+S20bootlogs     -&gt;  ../init.d/bootlogs
+S21rc.local     -&gt;  ../init.d/rc.local
+S21rmnologin    -&gt;  ../init.d/rmnologin
+S21stop-bootlog -&gt;  ../init.d/stop-bootlogd
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br></div></div><p>如你所见，此目录中的文件只是实际启动脚本的符号链接。我们来看看其中一个链接：<code>S18ssh→../init.d/ssh</code>。这是关于这个文件的事情：</p><ul><li>它是一个<code>./init.d/ssh</code>文件的链接</li><li>它以<code>S</code>开始，意味着“启动”。Debian 启动系统中使用的每个脚本至少有 2 个参数，“启动”和“停止”。现在我们可以说，当我们的系统切换到运行级别 2 时，该脚本将使用动作“启动”来执行 。</li><li>它有一个数字 18。<code>rc</code>目录中的脚本以字典序执行，所以现在我们明白，在启动<code>ssh</code>之前 ，系统启动<code>portmap</code>，<code>nfs-common</code>，<code>rsyslog</code>和<code>sudo</code>。<code>rsyslog</code>是一个系统日志守护程序，特别是<code>ssh</code>想要记录谁在什么时候访问系统，所以在启动之前需要运行<code>rsyslog</code>。</li></ul><p>现在，你将学习如何列出启用的服务（守护程序），以及启用和禁用服务（守护程序）。</p><h2 id="这样做" tabindex="-1"><a class="header-anchor" href="#这样做" aria-hidden="true">#</a> 这样做</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code> 1: sudo aptitude install rcconf
+ 2: ls -al /etc/rc2.d
+ 3: sudo rcconf --list
+ 4: sudo update-rc.d exim4 disable
+ 5: ls -al /etc/rc2.d
+ 6: sudo rcconf --list
+ 7: sudo update-rc.d exim4 enable
+ 8: ls -al /etc/rc2.d
+ 9: sudo rcconf --list
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br></div></div><h2 id="你会看到什么" tabindex="-1"><a class="header-anchor" href="#你会看到什么" aria-hidden="true">#</a> 你会看到什么</h2><div class="language-text ext-text line-numbers-mode"><pre class="language-text"><code>user1@vm1:/var/log$ sudo aptitude install rcconf
+The following NEW packages will be installed:
+  rcconf
+0 packages upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 0 B/23.9 kB of archives. After unpacking 135 kB will be used.
+Selecting previously deselected package rcconf.
+(Reading database ... 24239 files and directories currently installed.)
+Unpacking rcconf (from .../archives/rcconf_2.5_all.deb) ...
+Processing triggers for man-db ...
+Setting up rcconf (2.5) ...
+ 
+user1@vm1:/etc$ ls -al /etc/rc2.d
+total 12
+drwxr-xr-x  2 root root 4096 Jun 27 11:42 .
+drwxr-xr-x 68 root root 4096 Jun 25 18:43 ..
+-rw-r--r--  1 root root  677 Mar 27 05:50 README
+lrwxrwxrwx  1 root root   17 Jun  4 11:53 S14portmap -&gt; ../init.d/portmap
+lrwxrwxrwx  1 root root   20 Jun  4 11:53 S15nfs-common -&gt; ../init.d/nfs-common
+lrwxrwxrwx  1 root root   17 Jun  4 11:53 S17rsyslog -&gt; ../init.d/rsyslog
+lrwxrwxrwx  1 root root   14 Jun 15 19:02 S17sudo -&gt; ../init.d/sudo
+lrwxrwxrwx  1 root root   15 Jun  4 11:53 S18acpid -&gt; ../init.d/acpid
+lrwxrwxrwx  1 root root   13 Jun  4 11:53 S18atd -&gt; ../init.d/atd
+lrwxrwxrwx  1 root root   14 Jun  4 11:53 S18cron -&gt; ../init.d/cron
+lrwxrwxrwx  1 root root   15 Jun 27 11:42 S18exim4 -&gt; ../init.d/exim4
+lrwxrwxrwx  1 root root   13 Jun  4 11:53 S18ssh -&gt; ../init.d/ssh
+lrwxrwxrwx  1 root root   18 Jun  4 11:53 S20bootlogs -&gt; ../init.d/bootlogs
+lrwxrwxrwx  1 root root   18 Jun  4 11:53 S21rc.local -&gt; ../init.d/rc.local
+lrwxrwxrwx  1 root root   19 Jun  4 11:53 S21rmnologin -&gt; ../init.d/rmnologin
+lrwxrwxrwx  1 root root   23 Jun  4 11:53 S21stop-bootlogd -&gt; ../init.d/stop-bootlogd
+user1@vm1:/etc$ sudo rcconf --list
+rsyslog on
+ssh on
+bootlogs on
+portmap on
+sudo on
+nfs-common on
+udev on
+console-setup on
+kbd on
+exim4 on
+keyboard-setup on
+acpid on
+cron on
+atd on
+procps on
+module-init-tools on
+user1@vm1:/etc$ sudo update-rc.d exim4 disable
+update-rc.d: using dependency based boot sequencing
+insserv: warning: current start runlevel(s) (empty) of script `exim4&#39; overwrites defaults (2 3 4 5).
+insserv: warning: current stop runlevel(s) (0 1 2 3 4 5 6) of script `exim4&#39; overwrites defaults (0 1 6).
+user1@vm1:/etc$ ls -al /etc/rc2.d
+total 12
+drwxr-xr-x  2 root root 4096 Jun 27 11:43 .
+drwxr-xr-x 68 root root 4096 Jun 25 18:43 ..
+lrwxrwxrwx  1 root root   15 Jun 27 11:43 K01exim4 -&gt; ../init.d/exim4
+-rw-r--r--  1 root root  677 Mar 27 05:50 README
+lrwxrwxrwx  1 root root   17 Jun  4 11:53 S14portmap -&gt; ../init.d/portmap
+lrwxrwxrwx  1 root root   20 Jun  4 11:53 S15nfs-common -&gt; ../init.d/nfs-common
+lrwxrwxrwx  1 root root   17 Jun  4 11:53 S17rsyslog -&gt; ../init.d/rsyslog
+lrwxrwxrwx  1 root root   14 Jun 15 19:02 S17sudo -&gt; ../init.d/sudo
+lrwxrwxrwx  1 root root   15 Jun  4 11:53 S18acpid -&gt; ../init.d/acpid
+lrwxrwxrwx  1 root root   13 Jun  4 11:53 S18atd -&gt; ../init.d/atd
+lrwxrwxrwx  1 root root   14 Jun  4 11:53 S18cron -&gt; ../init.d/cron
+lrwxrwxrwx  1 root root   13 Jun  4 11:53 S18ssh -&gt; ../init.d/ssh
+lrwxrwxrwx  1 root root   18 Jun  4 11:53 S20bootlogs -&gt; ../init.d/bootlogs
+lrwxrwxrwx  1 root root   18 Jun  4 11:53 S21rc.local -&gt; ../init.d/rc.local
+lrwxrwxrwx  1 root root   19 Jun  4 11:53 S21rmnologin -&gt; ../init.d/rmnologin
+lrwxrwxrwx  1 root root   23 Jun  4 11:53 S21stop-bootlogd -&gt; ../init.d/stop-bootlogd
+user1@vm1:/etc$ sudo rcconf --list
+rsyslog on
+ssh on
+bootlogs on
+portmap on
+sudo on
+nfs-common on
+udev on
+console-setup on
+kbd on
+keyboard-setup on
+acpid on
+cron on
+atd on
+procps on
+module-init-tools on
+exim4 off
+user1@vm1:/etc$ sudo update-rc.d exim4 enable
+update-rc.d: using dependency based boot sequencing
+user1@vm1:/etc$ ls -al /etc/rc2.d
+total 12
+drwxr-xr-x  2 root root 4096 Jun 27 11:43 .
+drwxr-xr-x 68 root root 4096 Jun 25 18:43 ..
+-rw-r--r--  1 root root  677 Mar 27 05:50 README
+lrwxrwxrwx  1 root root   17 Jun  4 11:53 S14portmap -&gt; ../init.d/portmap
+lrwxrwxrwx  1 root root   20 Jun  4 11:53 S15nfs-common -&gt; ../init.d/nfs-common
+lrwxrwxrwx  1 root root   17 Jun  4 11:53 S17rsyslog -&gt; ../init.d/rsyslog
+lrwxrwxrwx  1 root root   14 Jun 15 19:02 S17sudo -&gt; ../init.d/sudo
+lrwxrwxrwx  1 root root   15 Jun  4 11:53 S18acpid -&gt; ../init.d/acpid
+lrwxrwxrwx  1 root root   13 Jun  4 11:53 S18atd -&gt; ../init.d/atd
+lrwxrwxrwx  1 root root   14 Jun  4 11:53 S18cron -&gt; ../init.d/cron
+lrwxrwxrwx  1 root root   15 Jun 27 11:43 S18exim4 -&gt; ../init.d/exim4
+lrwxrwxrwx  1 root root   13 Jun  4 11:53 S18ssh -&gt; ../init.d/ssh
+lrwxrwxrwx  1 root root   18 Jun  4 11:53 S20bootlogs -&gt; ../init.d/bootlogs
+lrwxrwxrwx  1 root root   18 Jun  4 11:53 S21rc.local -&gt; ../init.d/rc.local
+lrwxrwxrwx  1 root root   19 Jun  4 11:53 S21rmnologin -&gt; ../init.d/rmnologin
+lrwxrwxrwx  1 root root   23 Jun  4 11:53 S21stop-bootlogd -&gt; ../init.d/stop-bootlogd
+user1@vm1:/etc$ sudo rcconf --list
+rsyslog on
+ssh on
+bootlogs on
+portmap on
+sudo on
+nfs-common on
+udev on
+console-setup on
+kbd on
+exim4 on
+keyboard-setup on
+acpid on
+cron on
+atd on
+procps on
+module-init-tools on
+user1@vm1:/etc$
+</code></pre><div class="line-numbers"><span class="line-number">1</span><br><span class="line-number">2</span><br><span class="line-number">3</span><br><span class="line-number">4</span><br><span class="line-number">5</span><br><span class="line-number">6</span><br><span class="line-number">7</span><br><span class="line-number">8</span><br><span class="line-number">9</span><br><span class="line-number">10</span><br><span class="line-number">11</span><br><span class="line-number">12</span><br><span class="line-number">13</span><br><span class="line-number">14</span><br><span class="line-number">15</span><br><span class="line-number">16</span><br><span class="line-number">17</span><br><span class="line-number">18</span><br><span class="line-number">19</span><br><span class="line-number">20</span><br><span class="line-number">21</span><br><span class="line-number">22</span><br><span class="line-number">23</span><br><span class="line-number">24</span><br><span class="line-number">25</span><br><span class="line-number">26</span><br><span class="line-number">27</span><br><span class="line-number">28</span><br><span class="line-number">29</span><br><span class="line-number">30</span><br><span class="line-number">31</span><br><span class="line-number">32</span><br><span class="line-number">33</span><br><span class="line-number">34</span><br><span class="line-number">35</span><br><span class="line-number">36</span><br><span class="line-number">37</span><br><span class="line-number">38</span><br><span class="line-number">39</span><br><span class="line-number">40</span><br><span class="line-number">41</span><br><span class="line-number">42</span><br><span class="line-number">43</span><br><span class="line-number">44</span><br><span class="line-number">45</span><br><span class="line-number">46</span><br><span class="line-number">47</span><br><span class="line-number">48</span><br><span class="line-number">49</span><br><span class="line-number">50</span><br><span class="line-number">51</span><br><span class="line-number">52</span><br><span class="line-number">53</span><br><span class="line-number">54</span><br><span class="line-number">55</span><br><span class="line-number">56</span><br><span class="line-number">57</span><br><span class="line-number">58</span><br><span class="line-number">59</span><br><span class="line-number">60</span><br><span class="line-number">61</span><br><span class="line-number">62</span><br><span class="line-number">63</span><br><span class="line-number">64</span><br><span class="line-number">65</span><br><span class="line-number">66</span><br><span class="line-number">67</span><br><span class="line-number">68</span><br><span class="line-number">69</span><br><span class="line-number">70</span><br><span class="line-number">71</span><br><span class="line-number">72</span><br><span class="line-number">73</span><br><span class="line-number">74</span><br><span class="line-number">75</span><br><span class="line-number">76</span><br><span class="line-number">77</span><br><span class="line-number">78</span><br><span class="line-number">79</span><br><span class="line-number">80</span><br><span class="line-number">81</span><br><span class="line-number">82</span><br><span class="line-number">83</span><br><span class="line-number">84</span><br><span class="line-number">85</span><br><span class="line-number">86</span><br><span class="line-number">87</span><br><span class="line-number">88</span><br><span class="line-number">89</span><br><span class="line-number">90</span><br><span class="line-number">91</span><br><span class="line-number">92</span><br><span class="line-number">93</span><br><span class="line-number">94</span><br><span class="line-number">95</span><br><span class="line-number">96</span><br><span class="line-number">97</span><br><span class="line-number">98</span><br><span class="line-number">99</span><br><span class="line-number">100</span><br><span class="line-number">101</span><br><span class="line-number">102</span><br><span class="line-number">103</span><br><span class="line-number">104</span><br><span class="line-number">105</span><br><span class="line-number">106</span><br><span class="line-number">107</span><br><span class="line-number">108</span><br><span class="line-number">109</span><br><span class="line-number">110</span><br><span class="line-number">111</span><br><span class="line-number">112</span><br><span class="line-number">113</span><br><span class="line-number">114</span><br><span class="line-number">115</span><br><span class="line-number">116</span><br><span class="line-number">117</span><br><span class="line-number">118</span><br><span class="line-number">119</span><br><span class="line-number">120</span><br><span class="line-number">121</span><br><span class="line-number">122</span><br><span class="line-number">123</span><br></div></div><h2 id="解释" tabindex="-1"><a class="header-anchor" href="#解释" aria-hidden="true">#</a> 解释</h2><ol><li>安装<code>rcconf</code>包，让你轻松管理运行级别。</li><li>打印包含运行级别 2 的启动脚本的目录。现在启用了邮件服务器<code>exim4</code>。</li><li>仅仅打印出相同运行级别的服务。请注意，由于它们被视为系统服务，因此存在多个未显示的服务。<code>rcconf –list –expert</code>会把它们全部列出，以及更多的驻留在不同的运行级别上的服务。</li><li>禁用邮件服务器<code>exim4</code>的自动启动。</li><li>打印出包括运行级别 2 的启动脚本的目录。<code>exim4</code>启动脚本现在从<code>S18exim4</code>重命名为<code>K01exim4</code>。这意味着<code>exim4</code>进入此级别时已停止（被杀死）。如果<code>exim4</code>开始没有运行，就没有任何反应。</li><li>打印运行级别 2 的服务。服务<code>exim4</code>现在已关闭。</li><li>开启<code>exim4</code>的自动启动。</li><li>再次打印包含运行级别 2 的启动脚本的目录，<code>exim4</code>再次启动。</li><li>打印运行级别 2 的服务。<code>exim4</code>的状态变更为已启动，和预期一样。</li></ol><h2 id="附加题" tabindex="-1"><a class="header-anchor" href="#附加题" aria-hidden="true">#</a> 附加题</h2><ul><li>请阅读 Debian 启动过程：<a href="http://www.debian.org/doc/manuals/debian-reference/ch03.en.html" target="_blank" rel="noopener noreferrer">http://www.debian.org/doc/manuals/debian-reference/ch03.en.html<span><svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewbox="0 0 100 100" width="15" height="15"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path><polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg><span class="external-link-icon-sr-only">在新窗口打开</span></span></a></li><li>尝试这样做：<code>aptitude install sysv-rc-conf</code>，<code>sysv-rc-conf -list</code>。阅读<code>man sysv-rc-conf</code>。</li></ul><!--]--></div><footer class="page-meta"><!----><div class="meta-item last-updated"><span class="meta-item-label">上次更新: </span><!----></div><div class="meta-item contributors"><span class="meta-item-label">贡献者: </span><span class="meta-item-info"><!--[--><!--[--><span class="contributor" title="email: yzqdev@outlook.com">yzqdev</span><!----><!--]--><!--]--></span></div></footer><nav class="page-nav"><p class="inner"><span class="prev"><a href="/llthw-zh/ex14.html" class="" aria-label="练习 14：包管理：Debian 包管理工具aptitude"><!--[--><!--]--> 练习 14：包管理：Debian 包管理工具aptitude <!--[--><!--]--></a></span><span class="next"><a href="/llthw-zh/ex16.html" class="" aria-label="练习 16：处理进程，ps，kill"><!--[--><!--]--> 练习 16：处理进程，ps，kill <!--[--><!--]--></a></span></p></nav><!--[--><!--]--></main><!--]--></div><!----><!--]--></div>
+    <script type="module" src="/llthw-zh/assets/app.91d0dc40.js" defer></script>
+  </body>
+</html>
